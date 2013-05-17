@@ -1,0 +1,14 @@
+{% load cms_tags sekizai_tags menu_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    {% render_block "css" %}
+</head>
+<body>
+    {% language_chooser %}
+    {% block main %}{% endblock %}
+    {% render_block "js" %}
+</body>
+</html>

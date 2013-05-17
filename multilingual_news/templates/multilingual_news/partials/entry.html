@@ -1,0 +1,8 @@
+{% load simple_translation_tags multilingual_news_tags thumbnail %}
+
+{% with news_entry|get_preferred_translation_from_request:request as news_entry_title %}
+    {% if news_entry.image %}<img src="{% thumbnail news_entry.image 100x100 crop %}" alt="" />{% endif %}
+    {% if news_entry.pub_date %}<p>{{ news_entry.pub_date }}</p>{% endif %}
+    <h2><a href="{{ news_entry.get_absolute_url }}">{{ news_entry_title.title }}</a></h2>
+    {% render_news_placeholder news_entry 15 %}
+{% endwith %}

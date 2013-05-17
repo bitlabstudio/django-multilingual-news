@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load simple_translation_tags multilingual_news_tags %}
+
+{% block main %}
+{% with object|get_preferred_translation_from_request:request as news_entry_title %}
+    <h1>{{ news_entry_title.title }}</h1>
+    {% if object.pub_date %}<p>{{ object.pub_date }}</p>{% endif %}
+    {% render_news_placeholder object 'content' %}
+{% endwith %}
+{% endblock %}
