@@ -1,8 +1,6 @@
 Django Multilingual News
 ========================
 
-EARLY ALPHA! DO NOT USE THIS!
-
 A reusable Django app for managing news/blog entries in different languages.
 
 Comes with a django-cms apphook and has been prepared using Django 1.5.1 and
@@ -14,7 +12,7 @@ Installation
 
 If you want to install the latest stable release from PyPi::
 
-    $ pip install django-multilingual-news (n/a)
+    $ pip install django-multilingual-news
 
 If you feel adventurous and want to install the latest commit from GitHub::
 
@@ -48,7 +46,7 @@ We provide a template tag to render the news entry's placeholder. First import
 the tag library, then add the tag plus arguments::
 
     {% load multilingual_news_tags %}
-    {% render_news_placeholder NEWS_ENTRY_OBJECT OPTIONAL_PLACEHOLDER_SLOT %}
+    {% render_news_placeholder NEWS_ENTRY_OBJECT OPTIONAL_PLACEHOLDER_SLOT OPTIONAL_TRUNCATION %}
 
 To render the first non-empty placeholder (e.g. if the excerpt is empty)::
 
@@ -61,6 +59,14 @@ To render the ``excerpt``::
 To render the ``content``::
 
     {% render_news_placeholder news_entry 'content' %}
+
+To render and truncate the ``content`` (10 words)::
+
+    {% render_news_placeholder news_entry 'content' 10 %}
+
+To render and truncate the first non-empty placeholder (20 words)::
+
+    {% render_news_placeholder news_entry 20 %}
 
 
 Settings
