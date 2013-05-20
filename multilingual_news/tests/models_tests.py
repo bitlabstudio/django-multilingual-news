@@ -1,5 +1,7 @@
 """Tests for the models of the ``multilingual_news`` app."""
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.utils.timezone import now, timedelta
 
 from mock import Mock
 
@@ -19,6 +21,24 @@ class NewsEntryTestCase(TestCase):
         instance = NewsEntryFactory()
         self.assertTrue(instance.pk, msg=(
             'Should be able to instantiate and save the object.'))
+
+    def test_is_published(self):
+        title = NewsEntryTitleDEFactory()
+        instance = title.entry
+        result = instance.is_published()
+        self.assertTrue(result, msg=('Should return True if published.'))
+        instance.pub_date = now() + timedelta(days=1)
+        self.assertFalse(instance.is_published(), msg=(
+            'Should return False if publication date in future.'))
+
+    def test_get_preview_url(self):
+        title = NewsEntryTitleDEFactory()
+        instance = title.entry
+        result = instance.get_preview_url()
+        slug = instance.get_slug()
+        self.assertEqual(
+            result, reverse('news_preview', kwargs={'slug': slug}), msg=(
+                'Should return the preview url.'))
 
     def test_get_title(self):
         title = NewsEntryTitleDEFactory()

@@ -1,0 +1,18 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block after_related_objects %}
+    {% if original.pk %}
+        <div class="submit-row" style="text-align: center; background: #{% if original.is_published %}33AA33{% else %}AA3333{% endif %}; color: #eee;">
+            <p style="text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);">
+                {% if original.is_published %}
+                    {% trans "Your entry is published." %}
+                    <a style="color: #fff; font-weight: bold;" href="{{ original.get_absolute_url }}" target="_blank">{% trans "Show it!" %}</a>
+                {% else %}
+                    {% trans "This entry isn't published at the moment." %}
+                    <a style="color: #fff; font-weight: bold;" href="{{ original.get_preview_url }}" target="_blank">{% trans "Preview it!" %}</a>
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+{% endblock %}

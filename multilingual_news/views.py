@@ -26,10 +26,12 @@ class DetailViewMixin(object):
         pk.
 
         """
+        if not self.queryset:
+            self.queryset = NewsEntry.objects.published(request, False)
         self.kwargs = kwargs
         try:
-            result = NewsEntry.objects.published(request, False).get(
-                newsentrytitle__slug=self.kwargs.get('slug'))
+            result = self.queryset.get(newsentrytitle__slug=self.kwargs.get(
+                'slug'))
         except NewsEntry.DoesNotExist:
             raise Http404
         else:

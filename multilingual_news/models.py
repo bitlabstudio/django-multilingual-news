@@ -83,6 +83,10 @@ class NewsEntry(SimpleTranslationMixin, models.Model):
                 'day': self.pub_date.day, 'slug': slug})
         return reverse('news_detail', kwargs={'slug': slug})
 
+    def get_preview_url(self):
+        slug = self.get_slug()
+        return reverse('news_preview', kwargs={'slug': slug})
+
     def get_slug(self):
         lang = get_language()
         return get_preferred_translation_from_lang(self, lang).slug
@@ -90,6 +94,11 @@ class NewsEntry(SimpleTranslationMixin, models.Model):
     def get_title(self):
         lang = get_language()
         return get_preferred_translation_from_lang(self, lang).title
+
+    def is_published(self):
+        lang = get_language()
+        return (get_preferred_translation_from_lang(self, lang).is_published
+                and (not self.pub_date or self.pub_date <= now()))
 
 
 class NewsEntryTitle(models.Model):

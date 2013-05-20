@@ -100,6 +100,7 @@ class M2MPlaceholderAdmin(PlaceholderTranslationAdmin):
 class NewsEntryAdmin(M2MPlaceholderAdmin):
     """Admin class for the ``NewsEntry`` model."""
     list_display = ['title', 'author', 'pub_date', 'is_published']
+    change_form_template = 'multilingual_news/admin/change_form.html'
 
     def title(self, obj):
         lang = get_language()
@@ -107,8 +108,16 @@ class NewsEntryAdmin(M2MPlaceholderAdmin):
     title.short_description = _('Title')
 
     def is_published(self, obj):
-        lang = get_language()
-        return get_preferred_translation_from_lang(obj, lang).is_published
+        languages = ''
+        for trans in obj.translations:
+            if trans.is_published:
+                if languages == '':
+                    languages = trans.language
+                else:
+                    languages += ', {0}'.format(trans.language)
+        if languages == '':
+            return _('Not published')
+        return languages
     title.short_description = _('Is published')
 
     class Media:
