@@ -1,3 +1,7 @@
+=== 0.1.1 ===
+
+- Added preview url and added it to the admin's change form
+
 === 0.1 ===
 
 Initial commit
