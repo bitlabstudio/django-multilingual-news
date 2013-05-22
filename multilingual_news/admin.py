@@ -118,7 +118,7 @@ class NewsEntryAdmin(M2MPlaceholderAdmin):
         if languages == '':
             return _('Not published')
         return languages
-    title.short_description = _('Is published')
+    is_published.short_description = _('Is published')
 
     class Media:
         js = (
