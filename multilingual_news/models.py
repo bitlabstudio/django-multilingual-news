@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 
+from cms.models import CMSPlugin
 from django_libs.models_mixins import SimpleTranslationMixin
 from djangocms_utils.fields import M2MPlaceholderField
 from filer.fields.image import FilerImageField
@@ -131,3 +132,13 @@ class NewsEntryTitle(models.Model):
 
     language = models.CharField(
         max_length=5, verbose_name=('Language'), choices=settings.LANGUAGES)
+
+
+class RecentPlugin(CMSPlugin):
+    """Plugin model to display recent news."""
+    limit = models.PositiveIntegerField(
+        verbose_name=_('Maximum news amount'),
+    )
+    current_language_only = models.BooleanField(
+        verbose_name=_('Only show entries for the selected language'),
+    )
