@@ -48,6 +48,10 @@ class NewsEntry(SimpleTranslationMixin, models.Model):
     :image: Main image of the blog entry.
     :image_float: Can be set to ``none``, ``left`` or ``right`` to adjust
       floating behaviour in the blog entry template.
+    :image_width: Can be set to manipulate image width
+    :image_height: Can be set to manipulate image height
+    :image_source_text: Text for the link to the image source
+    :image_source_url: URL for the link to the image source
     :placeholders: CMS placeholders for ``exerpt`` and ``content``
 
     """
@@ -81,6 +85,28 @@ class NewsEntry(SimpleTranslationMixin, models.Model):
         max_length=8,
         verbose_name=_('Image float'),
         choices=IMAGE_FLOAT_CHOICES,
+        blank=True,
+    )
+
+    image_width = models.IntegerField(
+        verbose_name=_('Image width'),
+        null=True, blank=True,
+    )
+
+    image_height = models.IntegerField(
+        verbose_name=_('Image height'),
+        null=True, blank=True,
+    )
+
+    image_source_url = models.CharField(
+        max_length=1024,
+        verbose_name=_('Image source URL'),
+        blank=True,
+    )
+
+    image_source_text = models.CharField(
+        max_length=1024,
+        verbose_name=_('Image source text'),
         blank=True,
     )
 

@@ -1,5 +1,7 @@
 === ongoing ===
 
+- Added image_width, image_height, image_source_url and image_source_text fields
+
 === 0.3 ===
 
 - Added image_float field
