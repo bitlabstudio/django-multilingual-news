@@ -48,8 +48,21 @@ class M2MPlaceholderAdmin(PlaceholderTranslationAdmin):
         fieldsets.
 
         """
+        language_fieldset = (None, {'fields': ['language', ], })
         given_fieldsets = super(M2MPlaceholderAdmin, self).get_fieldsets(
             request, obj=None)
+
+        # first we remove the language field from the end of of the fieldset
+        # for the regular fields
+        for fieldset in given_fieldsets:
+            try:
+                fieldset[1]['fields'].remove('language')
+            except ValueError:
+                pass
+
+        # then we add the language field back as a new fieldset at the top of
+        # the page
+        given_fieldsets.insert(0, language_fieldset)
 
         if obj:
             for placeholder_name in obj._meta.get_field(
