@@ -3,7 +3,20 @@ from django import template
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import safe, truncatewords_html
 
+from ..models import NewsEntry
+
+
 register = template.Library()
+
+
+@register.assignment_tag(takes_context=True)
+def get_recent_news(context, check_language=True, limit=3, exclude=None):
+    qs = NewsEntry.objects.recent(
+        context['request'],
+        check_language=check_language,
+        limit=limit,
+        exclude=exclude)
+    return qs
 
 
 @register.simple_tag(takes_context=True)

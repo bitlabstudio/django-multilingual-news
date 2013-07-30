@@ -71,6 +71,17 @@ To render and truncate the first non-empty placeholder (20 words)::
 
     {% render_news_placeholder news_entry 20 %}
 
+To render recent news::
+
+    {% get_recent_news limit=5 as recent_news %}
+    {% include "multilingual_news/recent.html" with object_list=recent_news %}
+
+If you want to render recent news on a news detail page, you might want to
+exclude the current news from the queryset::
+
+    {% get_recent_news exclude=object as recent_news %}
+    {% include "multilingual_news/recent.html" with object_list=recent_news %}
+
 
 Settings
 --------

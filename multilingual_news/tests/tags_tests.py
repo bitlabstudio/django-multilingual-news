@@ -1,11 +1,39 @@
 """Tests for tags of the ``multilingual_news``` application."""
+from mock import Mock
+
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.template.context import RequestContext
 from django.test import TestCase
 from django.test.client import RequestFactory
 
-from ..templatetags.multilingual_news_tags import render_news_placeholder
-from .factories import TextPluginFactory, NewsEntryFactory, PlaceholderFactory
+from ..templatetags.multilingual_news_tags import (
+    get_recent_news,
+    render_news_placeholder,
+)
+from .factories import (
+    NewsEntryFactory,
+    NewsEntryTitleENFactory,
+    PlaceholderFactory,
+    TextPluginFactory,
+)
+
+
+class GetRecentNewsTestCase(TestCase):
+    """Tests for the ``get_recent_news`` assignment tag."""
+    longMessage = True
+
+    def setUp(self):
+        NewsEntryTitleENFactory()
+        NewsEntryTitleENFactory()
+        NewsEntryTitleENFactory()
+        NewsEntryTitleENFactory()
+
+    def test_tag(self):
+        req = RequestFactory().get('/')
+        context = {'request': req, }
+        result = get_recent_news(context)
+        self.assertEqual(result.count(), 3, msg=(
+            'Should return last three recent news'))
 
 
 class RenderNewsPlaceholderTestCase(TestCase):

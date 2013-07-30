@@ -7,11 +7,13 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models import CMSPlugin
+from cms.utils import get_language_from_request
 from django_libs.models_mixins import SimpleTranslationMixin
 from djangocms_utils.fields import M2MPlaceholderField
 from filer.fields.image import FilerImageField
 from simple_translation.actions import SimpleTranslationPlaceholderActions
 from simple_translation.utils import get_preferred_translation_from_lang
+from simple_translation.utils import get_translation_filter_language
 
 
 class NewsEntryManager(models.Manager):
@@ -25,16 +27,33 @@ class NewsEntryManager(models.Manager):
         :param check_language: Option to disable language filtering.
 
         """
-        results = self.get_query_set().filter(
+        qs = self.get_query_set().filter(
             models.Q(newsentrytitle__is_published=True),
             models.Q(pub_date__lte=now()) | models.Q(pub_date__isnull=True)
         )
         if check_language:
-            language = getattr(request, 'LANGUAGE_CODE', None)
-            if not language:
-                self.model.objects.none()
-            results = results.filter(newsentrytitle__language=language)
-        return results.distinct()
+            language = get_language_from_request(request)
+            kwargs = get_translation_filter_language(NewsEntry, language)
+            qs = qs.filter(**kwargs)
+        return qs.distinct()
+
+    def recent(self, request, check_language=True, limit=3, exclude=None):
+        """
+        Returns recently published new entries.
+
+        :param request: A Request instance.
+        :param check_language: Option to disable language filtering.
+
+        """
+        qs = self.published(request, check_language=check_language)
+        if check_language:
+            # Filter news with current language
+            language = get_language_from_request(request)
+            kwargs = get_translation_filter_language(NewsEntry, language)
+            qs = qs.filter(**kwargs)
+        if exclude:
+            qs = qs.exclude(pk=exclude.pk)
+        return qs[:limit]
 
 
 class NewsEntry(SimpleTranslationMixin, models.Model):

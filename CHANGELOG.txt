@@ -2,6 +2,8 @@
 
 - Added image_width, image_height, image_source_url and image_source_text fields
 - Moved language field into it's own fieldset on top of the page
+- Added get_recent_news assgnment tag
+- Added .recent to NewsEntryManager
 
 === 0.3 ===
 
