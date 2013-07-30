@@ -45,8 +45,22 @@ class NewsEntry(SimpleTranslationMixin, models.Model):
 
     :author: Optional FK to the User who created this entry.
     :pub_date: DateTime when this entry should be published.
+    :image: Main image of the blog entry.
+    :image_float: Can be set to ``none``, ``left`` or ``right`` to adjust
+      floating behaviour in the blog entry template.
+    :placeholders: CMS placeholders for ``exerpt`` and ``content``
 
     """
+    IMAGE_FLOAT_VALUES = {
+        'left': 'left',
+        'right': 'right',
+    }
+
+    IMAGE_FLOAT_CHOICES = (
+        (IMAGE_FLOAT_VALUES['left'], _('Left')),
+        (IMAGE_FLOAT_VALUES['right'], _('Right')),
+    )
+
     author = models.ForeignKey(
         'auth.User',
         verbose_name=_('Author'),
@@ -61,6 +75,13 @@ class NewsEntry(SimpleTranslationMixin, models.Model):
     image = FilerImageField(
         verbose_name=_('Image'),
         null=True, blank=True,
+    )
+
+    image_float = models.CharField(
+        max_length=8,
+        verbose_name=_('Image float'),
+        choices=IMAGE_FLOAT_CHOICES,
+        blank=True,
     )
 
     placeholders = M2MPlaceholderField(

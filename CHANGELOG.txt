@@ -1,3 +1,7 @@
+=== ongoing ===
+
+- Added image_float field
+
 === 0.2 ===
 
 - Added recent news cms plugin
