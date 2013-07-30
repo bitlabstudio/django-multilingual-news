@@ -1,5 +1,7 @@
 === ongoing ===
 
+=== 0.3 ===
+
 - Added image_float field
 
 === 0.2 ===
