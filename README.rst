@@ -43,33 +43,10 @@ Simply create a django-cms page and select it in the ``Application`` field of
 the ``Advanced Settings``.
 
 Template tags
-+++++++++++++
+-------------
 
-We provide a template tag to render the news entry's placeholder. First import
-the tag library, then add the tag plus arguments::
-
-    {% load multilingual_news_tags %}
-    {% render_news_placeholder NEWS_ENTRY_OBJECT OPTIONAL_PLACEHOLDER_SLOT OPTIONAL_TRUNCATION %}
-
-To render the first non-empty placeholder (e.g. if the excerpt is empty)::
-
-    {% render_news_placeholder news_entry %}
-
-To render the ``excerpt``::
-
-    {% render_news_placeholder news_entry 'excerpt' %}
-
-To render the ``content``::
-
-    {% render_news_placeholder news_entry 'content' %}
-
-To render and truncate the ``content`` (10 words)::
-
-    {% render_news_placeholder news_entry 'content' 10 %}
-
-To render and truncate the first non-empty placeholder (20 words)::
-
-    {% render_news_placeholder news_entry 20 %}
+get_recent_news
++++++++++++++++
 
 To render recent news::
 
