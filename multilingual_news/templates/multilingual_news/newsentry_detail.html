@@ -2,7 +2,7 @@
 {% load multilingual_news_tags placeholder_tags %}
 
 {% block main %}
-<h1>{{ news_entry.title }}</h1>
+<h1>{{ object.title }}</h1>
 {% if object.pub_date %}<p>{{ object.pub_date }}</p>{% endif %}
 {% render_placeholder object.content %}
 {% endblock %}
