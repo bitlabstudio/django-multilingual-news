@@ -3,8 +3,6 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
 from django.utils.timezone import now, timedelta
 
-from mock import Mock
-
 from ..models import NewsEntry
 from .factories import (
     NewsEntryFactory,
@@ -83,13 +81,13 @@ class NewsEntryManagerTestCase(TestCase):
         request = RequestFactory().get('/')
         result = NewsEntry.objects.recent(request)
         self.assertEqual(result.count(), 1, msg=(
-                'Should return recent objects for the default language'))
+            'Should return recent objects for the default language'))
 
         request = RequestFactory().get('/')
         request.LANGUAGE_CODE = 'de'
         result = NewsEntry.objects.recent(request)
         self.assertEqual(result.count(), 2, msg=(
-                'Should return recent objects for the German language'))
+            'Should return recent objects for the German language'))
 
         request = RequestFactory().get('/')
         result = NewsEntry.objects.recent(request, check_language=False)

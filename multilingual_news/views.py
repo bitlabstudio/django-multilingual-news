@@ -21,21 +21,21 @@ class DetailViewMixin(object):
     def dispatch(self, request, *args, **kwargs):
         """
         We want to see the slug in the url, but the slug rests in the
-        translated NewsEntryTitle model. So we kid the view and tell it to use
-        a slug instead of a pk, then get the relevant NewsEntry and provide its
-        pk.
+        translated NewsEntryTranslation model. So we kid the view and tell it
+        to use a slug instead of a pk, then get the relevant NewsEntry and
+        provide its pk.
 
         """
         if not self.queryset:
             self.queryset = NewsEntry.objects.published(request, False)
         self.kwargs = kwargs
         try:
-            result = self.queryset.get(newsentrytitle__slug=self.kwargs.get(
-                'slug'))
+            result = self.queryset.get(
+                translations__slug=self.kwargs.get('slug'))
         except NewsEntry.DoesNotExist:
             raise Http404
         else:
-            if result.get_slug() != self.kwargs.get('slug'):
+            if result.slug != self.kwargs.get('slug'):
                 return HttpResponseRedirect(result.get_absolute_url())
             self.kwargs.update({'pk': result.pk})
             del self.kwargs['slug']

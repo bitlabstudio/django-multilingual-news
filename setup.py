@@ -30,6 +30,7 @@ setup(
     install_requires=[
         'Django>=1.5.1',
         'django-cms>=2.4.1',
+        'django-hvad>=0.3',
         'djangocms-utils>=0.9.5',
         'simple-translation>=0.8.6',
         'django-filer>=0.9.4',
