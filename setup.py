@@ -32,7 +32,6 @@ setup(
         'django-cms>=2.4.1',
         'django-hvad>=0.3',
         'djangocms-utils>=0.9.5',
-        'simple-translation>=0.8.6',
         'django-filer>=0.9.4',
         'Pillow>=2.0.0',
         'South',
@@ -40,7 +39,7 @@ setup(
     tests_require=[
         'fabric',
         'factory_boy<2.0.0',
-        'django-libs>=1.4.8',
+        'django-libs>=1.24',
         'django-nose',
         'coverage',
         'django-coverage',

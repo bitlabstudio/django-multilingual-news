@@ -1,5 +1,4 @@
 """Models for the ``multilingual_news`` app."""
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.timezone import now
@@ -10,7 +9,6 @@ from cms.models.fields import PlaceholderField
 from cms.models import CMSPlugin
 from cms.utils import get_language_from_request
 from filer.fields.image import FilerImageField
-from simple_translation.utils import get_translation_filter_language
 
 
 class NewsEntryManager(TranslationManager):

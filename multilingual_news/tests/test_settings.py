@@ -81,13 +81,11 @@ EXTERNAL_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.sites',
     'django_nose',
+    'djangocms_text_ckeditor',  # must come before cms
     'cms',
-    'cms.plugins.text',
     'sekizai',
     'menus',
     'mptt',
-    'djangocms_utils',
-    'simple_translation',
     'filer',
     'easy_thumbnails',
 ]

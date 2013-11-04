@@ -1,6 +1,4 @@
 """Tests for tags of the ``multilingual_news``` application."""
-from mock import Mock
-
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.template.context import RequestContext
 from django.test import TestCase
@@ -10,12 +8,7 @@ from ..templatetags.multilingual_news_tags import (
     get_recent_news,
     render_news_placeholder,
 )
-from .factories import (
-    NewsEntryFactory,
-    NewsEntryTitleENFactory,
-    PlaceholderFactory,
-    TextPluginFactory,
-)
+from . import factories
 
 
 class GetRecentNewsTestCase(TestCase):
@@ -23,10 +16,10 @@ class GetRecentNewsTestCase(TestCase):
     longMessage = True
 
     def setUp(self):
-        NewsEntryTitleENFactory()
-        NewsEntryTitleENFactory()
-        NewsEntryTitleENFactory()
-        NewsEntryTitleENFactory()
+        factories.NewsEntryFactory()
+        factories.NewsEntryFactory()
+        factories.NewsEntryFactory()
+        factories.NewsEntryFactory()
 
     def test_tag(self):
         req = RequestFactory().get('/')
@@ -43,10 +36,11 @@ class RenderNewsPlaceholderTestCase(TestCase):
     def test_tag(self):
         # create context mock
         request = RequestFactory().get('/')
+        request.current_page = None
         SessionMiddleware().process_request(request)
         request.session.save()
         context = RequestContext(request)
-        entry = NewsEntryFactory()
+        entry = factories.NewsEntryFactory()
 
         self.assertEqual(render_news_placeholder(context, entry), '', msg=(
             'Returns empty string, if there are no placeholders.'))
@@ -55,12 +49,12 @@ class RenderNewsPlaceholderTestCase(TestCase):
                          msg=('Returns empty string, if the requested slot'
                               ' does not exist.'))
 
-        entry.placeholders.add(PlaceholderFactory(slot='excerpt'))
+        entry.exerpt = factories.PlaceholderFactory(slot='excerpt')
         self.assertEqual(render_news_placeholder(context, entry), '', msg=(
             'Returns empty string, if there is no placeholder with content.'))
 
-        cmsplugin = TextPluginFactory()
-        entry.placeholders.add(cmsplugin.placeholder)
+        cmsplugin = factories.TextPluginFactory()
+        entry.content = cmsplugin.placeholder
         self.assertEqual(render_news_placeholder(context, entry), 'foo bar',
                          msg=('Returns rendered placeholder content.'))
 

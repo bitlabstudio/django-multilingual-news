@@ -1,5 +1,8 @@
 === ongoing ===
 
+- Removed simple-translation dependency
+- Fixed tests so that they pass with the new codebase again
+
 === 1.0 ===
 
 - Migration to django-cms 3 compatibility

@@ -2,9 +2,11 @@
 import factory
 
 from cms.models import Placeholder
-from cms.plugins.text.models import Text
 
-from ..models import NewsEntry, NewsEntryTitle
+from django_libs.tests.factories import HvadFactoryMixin
+from djangocms_text_ckeditor.models import Text
+
+from .. import models
 from .test_app.models import DummyModel
 
 
@@ -28,28 +30,11 @@ class TextPluginFactory(factory.Factory):
     placeholder = factory.SubFactory(PlaceholderFactory)
 
 
-class NewsEntryFactory(factory.Factory):
+class NewsEntryFactory(HvadFactoryMixin, factory.DjangoModelFactory):
     """Factory for the ``NewsEntry`` model."""
-    FACTORY_FOR = NewsEntry
+    FACTORY_FOR = models.NewsEntry
 
-
-class NewsEntryTitleFactoryBase(factory.Factory):
-    """Base factory for factories for ``NewsEntryTitle`` models."""
-    FACTORY_FOR = NewsEntryTitle
-
-    entry = factory.SubFactory(NewsEntryFactory)
-    is_published = True
-
-
-class NewsEntryTitleENFactory(NewsEntryTitleFactoryBase):
-    """Factory for english ``NewsEntryTitle`` objects."""
+    language_code = 'en'
     title = factory.Sequence(lambda x: 'A title {0}'.format(x))
     slug = factory.Sequence(lambda x: 'a-title-{0}'.format(x))
-    language = 'en'
-
-
-class NewsEntryTitleDEFactory(NewsEntryTitleFactoryBase):
-    """Factory for german ``NewsEntryTitle`` objects."""
-    title = factory.Sequence(lambda x: 'Ein Titel {0}'.format(x))
-    slug = factory.Sequence(lambda x: 'ein-titel-{0}'.format(x))
-    language = 'de'
+    is_published = True
