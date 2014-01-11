@@ -1,5 +1,7 @@
 === ongoing ===
 
+- Return preview url instead of absolute url if item is not published
+
 === 1.1 ===
 
 - Removed simple-translation dependency

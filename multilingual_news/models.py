@@ -160,6 +160,8 @@ class NewsEntry(TranslatableModel):
         return self.title
 
     def get_absolute_url(self):
+        if not self.is_published:
+            return self.get_preview_url()
         slug = self.slug
         if self.pub_date:
             return reverse('news_detail', kwargs={
