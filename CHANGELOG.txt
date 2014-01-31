@@ -1,5 +1,7 @@
 === ongoing ===
 
+=== 1.3 ===
+
 - Removed dispatch method / seems to work just fine with hvad and default
   generic view behaviour
 - Added FrontendEditableAdmin for better integration with django-cms 3
