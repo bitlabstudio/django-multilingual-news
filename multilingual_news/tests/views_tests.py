@@ -71,8 +71,3 @@ class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
             'month': self.entry.pub_date.month,
             'day': self.entry.pub_date.day,
         }
-        self.is_callable(
-            kwargs=data,
-            message=('Redirect, if slug is another language object.'),
-            and_redirects_to=self.entry.get_absolute_url(),
-        )

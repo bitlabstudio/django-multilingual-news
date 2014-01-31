@@ -1,4 +1,4 @@
-{% load multilingual_news_tags placeholder_tags thumbnail %}
+{% load multilingual_news_tags cms_tags thumbnail %}
 
 {% if news_entry.image %}<img src="{% thumbnail news_entry.image 100x100 crop %}" alt="" />{% endif %}
 {% if news_entry.pub_date %}<p>{{ news_entry.pub_date }}</p>{% endif %}

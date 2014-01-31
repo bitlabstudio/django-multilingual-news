@@ -1,5 +1,4 @@
 """Views for the ``multilingual_news`` app."""
-from django.http import Http404, HttpResponseRedirect
 from django.views.generic import DateDetailView, DetailView, ListView
 
 from .app_settings import PAGINATION_AMOUNT
