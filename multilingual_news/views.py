@@ -17,29 +17,10 @@ class NewsListView(ListView):
 class DetailViewMixin(object):
     """Mixin to handle different DetailView variations."""
     model = NewsEntry
+    slug_field = 'translations__slug'
 
-    def dispatch(self, request, *args, **kwargs):
-        """
-        We want to see the slug in the url, but the slug rests in the
-        translated NewsEntryTranslation model. So we kid the view and tell it
-        to use a slug instead of a pk, then get the relevant NewsEntry and
-        provide its pk.
-
-        """
-        if not self.queryset:
-            self.queryset = NewsEntry.objects.published(request, False)
-        self.kwargs = kwargs
-        try:
-            result = self.queryset.get(
-                translations__slug=self.kwargs.get('slug'))
-        except NewsEntry.DoesNotExist:
-            raise Http404
-        else:
-            if result.slug != self.kwargs.get('slug'):
-                return HttpResponseRedirect(result.get_absolute_url())
-            self.kwargs.update({'pk': result.pk})
-            del self.kwargs['slug']
-        return super(DetailViewMixin, self).dispatch(request, *args, **kwargs)
+    def get_queryset(self):
+        return NewsEntry.objects.published(self.request, False)
 
 
 class NewsDateDetailView(DetailViewMixin, DateDetailView):

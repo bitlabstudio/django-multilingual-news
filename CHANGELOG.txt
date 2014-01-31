@@ -1,5 +1,11 @@
 === ongoing ===
 
+- Removed dispatch method / seems to work just fine with hvad and default
+  generic view behaviour
+- Added FrontendEditableAdmin for better integration with django-cms 3
+
+=== 1.2 ===
+
 - Return preview url instead of absolute url if item is not published
 
 === 1.1 ===

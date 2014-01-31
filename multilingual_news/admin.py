@@ -2,13 +2,22 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
+try:
+    from cms.admin.placeholderadmin import FrontendEditableAdmin
+except ImportError:
+    class Object(object):
+        pass
+    FrontendEditableAdmin = Object
+
 from cms.admin.placeholderadmin import PlaceholderAdmin
 from hvad.admin import TranslatableAdmin
 
 from .models import NewsEntry
 
 
-class NewsEntryAdmin(TranslatableAdmin, PlaceholderAdmin):
+class NewsEntryAdmin(FrontendEditableAdmin,
+                     PlaceholderAdmin,
+                     TranslatableAdmin):
     """Admin class for the ``NewsEntry`` model."""
     list_display = [
         'get_title', 'pub_date', 'get_is_published', 'all_translations']
