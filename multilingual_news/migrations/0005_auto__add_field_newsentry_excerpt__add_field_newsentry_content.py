@@ -8,6 +8,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    needed_by = (
+        ('document_library', '0021_migrate_placeholders'),
+    )
+
     def forwards(self, orm):
         # Adding field 'NewsEntry.excerpt'
         db.add_column(u'multilingual_news_newsentry', 'excerpt',
