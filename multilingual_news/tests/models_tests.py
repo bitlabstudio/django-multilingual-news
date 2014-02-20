@@ -6,6 +6,16 @@ from .. import models
 from . import factories
 
 
+class CategoryTestCase(TestCase):
+    """Tests for the ``Category`` model class."""
+    longMessage = True
+
+    def test_instantiation(self):
+        """Test instantiation of the ``Category`` model."""
+        category = factories.CategoryFactory()
+        self.assertTrue(category.pk)
+
+
 class NewsEntryTestCase(TestCase):
     """Tests for the ``NewsEntry`` model."""
     longMessage = True

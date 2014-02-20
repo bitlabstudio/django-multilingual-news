@@ -38,8 +38,8 @@ setup(
     ],
     tests_require=[
         'fabric',
-        'factory_boy<2.0.0',
-        'django-libs>=1.24',
+        'factory_boy>=2.0.0',
+        'django-libs>=1.45',
         'django-nose',
         'coverage',
         'django-coverage',

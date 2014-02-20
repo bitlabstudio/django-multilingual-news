@@ -54,10 +54,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
-    'cms.middleware.page.CurrentPageMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -88,6 +88,7 @@ EXTERNAL_APPS = [
     'mptt',
     'filer',
     'easy_thumbnails',
+    'hvad',
 ]
 
 INTERNAL_APPS = [

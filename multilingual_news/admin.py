@@ -12,7 +12,15 @@ except ImportError:
 from cms.admin.placeholderadmin import PlaceholderAdmin
 from hvad.admin import TranslatableAdmin
 
-from .models import NewsEntry
+from .models import Category, NewsEntry
+
+
+class CategoryAdmin(TranslatableAdmin):
+    list_display = ['get_title', 'all_translations', ]
+
+    def get_title(self, obj):
+        return obj.title
+    get_title.short_description = _('Title')
 
 
 class NewsEntryAdmin(FrontendEditableAdmin,
@@ -31,4 +39,5 @@ class NewsEntryAdmin(FrontendEditableAdmin,
     get_title.short_description = _('Title')
 
 
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(NewsEntry, NewsEntryAdmin)

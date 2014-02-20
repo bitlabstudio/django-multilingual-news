@@ -2,11 +2,23 @@
 from django.conf.urls import patterns, url
 
 from .models import NewsEntry
-from .views import NewsDateDetailView, NewsDetailView, NewsListView
+from .views import (
+    CategoryListView,
+    GetEntriesAjaxView,
+    NewsDateDetailView,
+    NewsDetailView,
+    NewsListView,
+)
 
 
 urlpatterns = patterns(
     '',
+    url(r'^category/(?P<category>[^/]*)/',
+        CategoryListView.as_view(),
+        name='news_archive_category',),
+    url(r'^get-entries/',
+        GetEntriesAjaxView.as_view(),
+        name='news_get_entries',),
     url(r'^(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/(?P<slug>[\w-]+)/$',
         NewsDateDetailView.as_view(),
         name='news_detail'),

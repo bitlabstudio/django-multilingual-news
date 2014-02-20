@@ -1,6 +1,7 @@
-{% load multilingual_news_tags cms_tags thumbnail %}
+{% load multilingual_news_tags cms_tags thumbnail i18n %}
 
 {% if news_entry.image %}<img src="{% thumbnail news_entry.image 100x100 crop %}" alt="" />{% endif %}
-{% if news_entry.pub_date %}<p>{{ news_entry.pub_date }}</p>{% endif %}
-<h2><a href="{{ news_entry.get_absolute_url }}">{{ news_entry.title }}</a></h2>
+{% if news_entry.pub_date %}<p>{% render_model news_entry "pub_date" %}</p>{% endif %}
+{% if news_entry.category %}<p>{% trans "Category" %}: <a href="{{ news_entry.category.get_absolute_url }}">{% render_model news_entry "category" %}</a></p>{% endif %}
+<h2><a href="{{ news_entry.get_absolute_url }}">{% render_model news_entry "title" %}</a></h2>
 {% render_placeholder news_entry.content  %}

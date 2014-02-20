@@ -11,6 +11,71 @@ from cms.utils import get_language_from_request
 from filer.fields.image import FilerImageField
 
 
+class Category(TranslatableModel):
+    """
+    A blog ``Entry`` can belong to one category.
+
+    :creation_date: Date when this category was created.
+    :slug: The slug for this category. The slug will be the same for all
+      languages.
+    :parent: Allows you to build hierarchies of categories.
+
+    """
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    slug = models.SlugField(
+        max_length=512,
+        verbose_name=_('Slug'),
+    )
+
+    parent = models.ForeignKey(
+        'multilingual_news.Category',
+        verbose_name=_('Parent'),
+        null=True, blank=True,
+    )
+
+    translations = TranslatedFields(
+        title=models.CharField(
+            max_length=256,
+            verbose_name=_('Title'),
+        )
+    )
+
+    def __unicode__(self):
+        return self.safe_translation_getter('title', self.slug)
+
+    def get_entries(self):
+        """Returns the entries for this category."""
+        return self.newsentries.filter(
+            translations__is_published=True, pub_date__lte=now()) .order_by(
+            '-pub_date').distinct()
+
+    def get_absolute_url(self):
+        return reverse('news_archive_category', kwargs={
+            'category': self.slug, })
+
+
+class CategoryPlugin(CMSPlugin):
+    """
+    Plugin, which renders entries belonging to one or more category.
+
+    :categories: ...
+    :template_argument: Char which is place within templates as True, if you
+      want to alter a template.
+
+    """
+    categories = models.ManyToManyField(
+        Category,
+        verbose_name=_('Category'),
+    )
+
+    template_argument = models.CharField(
+        max_length=20,
+        verbose_name=_('Template Argument'),
+        blank=True,
+    )
+
+
 class NewsEntryManager(TranslationManager):
     """Custom manager for the ``NewsEntry`` model."""
     def published(self, request, check_language=True):
@@ -56,6 +121,7 @@ class NewsEntry(TranslatableModel):
     See ``NewsEntryTitle`` for the translateable fields of this model.
 
     :author: Optional FK to the User who created this entry.
+    :category: The optional category this entry belongs to.
     :pub_date: DateTime when this entry should be published.
     :image: Main image of the blog entry.
     :image_float: Can be set to ``none``, ``left`` or ``right`` to adjust
@@ -98,6 +164,13 @@ class NewsEntry(TranslatableModel):
         'auth.User',
         verbose_name=_('Author'),
         null=True, blank=True,
+    )
+
+    category = models.ForeignKey(
+        Category,
+        verbose_name=_('Category'),
+        related_name='newsentries',
+        blank=True, null=True,
     )
 
     pub_date = models.DateTimeField(

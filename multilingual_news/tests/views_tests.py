@@ -2,10 +2,47 @@
 from django.test import TestCase
 from django.utils.timezone import timedelta, now
 
-from django_libs.tests.mixins import ViewTestMixin
+from django_libs.tests.mixins import (
+    ViewRequestFactoryTestMixin,
+    ViewTestMixin,
+)
 
 from . import factories
 from .. import models
+from .. import views
+
+
+class CategoryListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
+    """Tests for the ``CategoryListView`` generic view class."""
+    view_class = views.CategoryListView
+
+    def setUp(self):
+        self.category = factories.CategoryFactory()
+        self.entry = factories.NewsEntryFactory(category=self.category)
+
+    def get_view_name(self):
+        return 'news_archive_category'
+
+    def get_view_kwargs(self):
+        return {'category': self.category.slug}
+
+    def test_view(self):
+        self.is_callable()
+
+
+class GetEntriesAjaxViewTestCase(ViewRequestFactoryTestMixin, TestCase):
+    """Tests for the ``GetEntriesAjaxView`` view class."""
+    view_class = views.GetEntriesAjaxView
+
+    def get_view_name(self):
+        return 'news_get_entries'
+
+    def test_view_with_count(self):
+        self.is_callable(data={'count': 1})
+
+    def test_view_with_category(self):
+        category = factories.CategoryFactory()
+        self.is_callable(data={'category': category.slug})
 
 
 class NewsListViewTestCase(ViewTestMixin, TestCase):

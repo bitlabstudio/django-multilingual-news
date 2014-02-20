@@ -7,6 +7,8 @@
     {% render_block "css" %}
 </head>
 <body>
+    {% cms_toolbar %}
+    {% show_menu %}
     {% language_chooser %}
     {% block main %}{% placeholder "main" %}{% endblock %}
     {% render_block "js" %}
