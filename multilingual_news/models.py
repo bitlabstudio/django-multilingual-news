@@ -130,7 +130,10 @@ class NewsEntry(TranslatableModel):
     :image_height: Can be set to manipulate image height
     :image_source_text: Text for the link to the image source
     :image_source_url: URL for the link to the image source
-    :placeholders: CMS placeholders for ``exerpt`` and ``content``
+    :content: CMS placeholder for ``content``
+    :excerpt: CMS placeholder for ``excerpt``
+    :meta_title: the title, that goes into the meta tags.
+    :meta_description: the description, that goes into the meta tags.
 
     """
     IMAGE_FLOAT_VALUES = {
@@ -158,6 +161,18 @@ class NewsEntry(TranslatableModel):
             verbose_name=_('Is published'),
             default=False,
         ),
+        meta_title=models.CharField(
+            verbose_name=_('Meta title'),
+            help_text=_('Best to keep this below 70 characters'),
+            max_length=128,
+            blank=True, null=True,
+        ),
+        meta_description=models.TextField(
+            verbose_name=_('Meta description'),
+            help_text=_('Best to keep this below 160 characters'),
+            max_length=512,
+            blank=True, null=True,
+        )
     )
 
     author = models.ForeignKey(
