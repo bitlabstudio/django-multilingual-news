@@ -44,8 +44,8 @@ class GetEntriesAjaxView(ListView):
         qs = NewsEntry.objects.published(self.request)
         if self.category:
             qs = qs.filter(
-                Q(category__slug=self.category) |
-                Q(category__parent__slug=self.category))
+                Q(categories__slug=self.category) |
+                Q(categories__parent__slug=self.category))
         if self.count:
             return qs[:self.count]
         return qs
