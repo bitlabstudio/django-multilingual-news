@@ -230,7 +230,7 @@ class NewsEntry(TranslatableModel):
         ordering = ('-pub_date', )
 
     def __unicode__(self):
-        return self.title
+        return self.safe_translation_getter('title', 'Untranslated entry')
 
     def get_absolute_url(self):
         if not self.is_published:
@@ -239,7 +239,9 @@ class NewsEntry(TranslatableModel):
         if self.pub_date:
             return reverse('news_detail', kwargs={
                 'year': self.pub_date.year, 'month': self.pub_date.month,
-                'day': self.pub_date.day, 'slug': slug})
+                'day': self.pub_date.day})
+        else:
+            return reverse('news_detail', kwargs=({'slug': slug}))
         return reverse('news_detail', kwargs={'slug': slug})
 
     def get_preview_url(self):
