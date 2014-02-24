@@ -1,5 +1,9 @@
 """Settings that need to be set in order to run the tests."""
 import os
+import logging
+
+
+logging.getLogger("factory").setLevel(logging.WARN)
 
 DEBUG = True
 
@@ -83,6 +87,7 @@ EXTERNAL_APPS = [
     'django_nose',
     'djangocms_text_ckeditor',  # must come before cms
     'cms',
+    'djangocms_link',
     'sekizai',
     'menus',
     'mptt',
