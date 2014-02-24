@@ -166,9 +166,9 @@ class NewsEntry(TranslatableModel):
         null=True, blank=True,
     )
 
-    category = models.ForeignKey(
+    categories = models.ManyToManyField(
         Category,
-        verbose_name=_('Category'),
+        verbose_name=_('Categories'),
         related_name='newsentries',
         blank=True, null=True,
     )

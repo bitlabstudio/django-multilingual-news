@@ -46,10 +46,14 @@ class Migration(SchemaMigration):
         # Adding unique constraint on 'CategoryTranslation', fields ['language_code', 'master']
         db.create_unique(u'multilingual_news_category_translation', ['language_code', 'master_id'])
 
-        # Adding field 'NewsEntry.category'
-        db.add_column(u'multilingual_news_newsentry', 'category',
-                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='newsentries', null=True, to=orm['multilingual_news.Category']),
-                      keep_default=False)
+        # Adding M2M table for field categories on 'NewsEntry'
+        m2m_table_name = db.shorten_name(u'multilingual_news_newsentry_categories')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('newsentry', models.ForeignKey(orm[u'multilingual_news.newsentry'], null=False)),
+            ('category', models.ForeignKey(orm[u'multilingual_news.category'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['newsentry_id', 'category_id'])
 
 
     def backwards(self, orm):
@@ -68,8 +72,8 @@ class Migration(SchemaMigration):
         # Deleting model 'CategoryTranslation'
         db.delete_table(u'multilingual_news_category_translation')
 
-        # Deleting field 'NewsEntry.category'
-        db.delete_column(u'multilingual_news_newsentry', 'category_id')
+        # Removing M2M table for field categories on 'NewsEntry'
+        db.delete_table(db.shorten_name(u'multilingual_news_newsentry_categories'))
 
 
     models = {
@@ -197,7 +201,7 @@ class Migration(SchemaMigration):
         u'multilingual_news.newsentry': {
             'Meta': {'ordering': "('-pub_date',)", 'object_name': 'NewsEntry'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'newsentries'", 'null': 'True', 'to': u"orm['multilingual_news.Category']"}),
+            'categories': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'newsentries'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['multilingual_news.Category']"}),
             'content': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'multilingual_news_contents'", 'null': 'True', 'to': "orm['cms.Placeholder']"}),
             'excerpt': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'multilingual_news_excerpts'", 'null': 'True', 'to': "orm['cms.Placeholder']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
