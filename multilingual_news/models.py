@@ -213,13 +213,13 @@ class NewsEntry(TranslatableModel):
     )
 
     excerpt = PlaceholderField(
-        slotname='multilingnual_news_excerpt',
+        slotname='multilingual_news_excerpt',
         related_name='multilingual_news_excerpts',
         blank=True, null=True,
     )
 
     content = PlaceholderField(
-        slotname='multilingnual_news_content',
+        slotname='multilingual_news_content',
         related_name='multilingual_news_contents',
         blank=True, null=True,
     )
