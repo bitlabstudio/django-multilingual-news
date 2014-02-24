@@ -28,13 +28,15 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'Django>=1.5.1',
-        'django-cms>=2.4.1',
+        'Django>=1.6.2',
         'django-hvad>=0.3',
         'djangocms-utils>=0.9.5',
         'django-filer>=0.9.4',
         'Pillow>=2.0.0',
         'South',
+    ],
+    dependency_links=[
+        'https://github.com/divio/django-cms/tarball/develop',
     ],
     tests_require=[
         'fabric',
@@ -44,6 +46,8 @@ setup(
         'coverage',
         'django-coverage',
         'mock',
+        'djangocms-text-ckeditor',
+        'djangocms-link',
     ],
     test_suite='multilingual_news.tests.runtests.runtests',
 )
