@@ -35,6 +35,7 @@ setup(
         'Pillow>=2.0.0',
         'South',
         'django-document-library',
+        'django-people',
     ],
     dependency_links=[
         'https://github.com/divio/django-cms/tarball/develop',

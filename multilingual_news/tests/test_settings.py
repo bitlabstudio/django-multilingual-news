@@ -95,6 +95,7 @@ EXTERNAL_APPS = [
     'easy_thumbnails',
     'hvad',
     'document_library',
+    'people',
 ]
 
 INTERNAL_APPS = [

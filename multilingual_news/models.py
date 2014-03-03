@@ -120,7 +120,7 @@ class NewsEntry(TranslatableModel):
 
     See ``NewsEntryTitle`` for the translateable fields of this model.
 
-    :author: Optional FK to the User who created this entry.
+    :author: Optional FK to the Person, who created this NewsEntry.
     :category: The optional category this entry belongs to.
     :pub_date: DateTime when this entry should be published.
     :image: Main image of the blog entry.
@@ -176,9 +176,9 @@ class NewsEntry(TranslatableModel):
     )
 
     author = models.ForeignKey(
-        'auth.User',
+        'people.Person',
         verbose_name=_('Author'),
-        null=True, blank=True,
+        blank=True, null=True,
     )
 
     categories = models.ManyToManyField(

@@ -30,7 +30,8 @@ class NewsEntryAdmin(FrontendEditableAdmin,
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline]
     list_display = [
-        'get_title', 'pub_date', 'get_is_published', 'all_translations']
+        'get_title', 'pub_date', 'author', 'get_is_published',
+        'all_translations']
 
     def get_is_published(self, obj):
         return obj.is_published
