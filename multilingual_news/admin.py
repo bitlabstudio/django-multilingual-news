@@ -15,9 +15,9 @@ from hvad.admin import TranslatableAdmin
 from .models import NewsEntry
 
 
-class NewsEntryAdmin(FrontendEditableAdmin,
-                     PlaceholderAdmin,
-                     TranslatableAdmin):
+class NewsEntryAdmin(TranslatableAdmin,
+                     FrontendEditableAdmin,
+                     PlaceholderAdmin):
     """Admin class for the ``NewsEntry`` model."""
     list_display = [
         'get_title', 'pub_date', 'get_is_published', 'all_translations']
