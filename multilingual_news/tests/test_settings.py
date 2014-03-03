@@ -94,6 +94,7 @@ EXTERNAL_APPS = [
     'filer',
     'easy_thumbnails',
     'hvad',
+    'document_library',
 ]
 
 INTERNAL_APPS = [

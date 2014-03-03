@@ -34,6 +34,7 @@ setup(
         'django-filer>=0.9.4',
         'Pillow>=2.0.0',
         'South',
+        'django-document-library',
     ],
     dependency_links=[
         'https://github.com/divio/django-cms/tarball/develop',

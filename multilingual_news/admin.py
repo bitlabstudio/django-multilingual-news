@@ -10,6 +10,7 @@ except ImportError:
     FrontendEditableAdmin = Object
 
 from cms.admin.placeholderadmin import PlaceholderAdmin
+from document_library.admin import AttachmentInline
 from hvad.admin import TranslatableAdmin
 
 from .models import Category, NewsEntry
@@ -27,6 +28,7 @@ class NewsEntryAdmin(FrontendEditableAdmin,
                      PlaceholderAdmin,
                      TranslatableAdmin):
     """Admin class for the ``NewsEntry`` model."""
+    inlines = [AttachmentInline]
     list_display = [
         'get_title', 'pub_date', 'get_is_published', 'all_translations']
 
