@@ -13,6 +13,12 @@ from ..models import NewsEntry
 register = template.Library()
 
 
+@register.assignment_tag
+def get_published_entries(object_list, language_code):
+    return NewsEntry.objects.language(language_code).filter(pk__in=[
+        obj.pk for obj in object_list], is_published=True)
+
+
 @register.simple_tag
 def get_newsentry_meta_description(newsentry):
     """Returns the meta description for the given entry."""
@@ -44,7 +50,7 @@ def get_newsentry_meta_description(newsentry):
     text = escape(content)
 
     if len(text) > 160:
-        return '{}...'.format(text[:160])
+        return u'{}...'.format(text[:160])
     return text
 
 

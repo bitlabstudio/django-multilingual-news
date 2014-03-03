@@ -8,9 +8,34 @@ from cms.models import Placeholder
 from ..templatetags.multilingual_news_tags import (
     get_newsentry_meta_description,
     get_newsentry_meta_title,
+    get_published_entries,
     get_recent_news,
 )
 from . import factories
+
+
+class GetPublishedEntriesTestCase(TestCase):
+    """Tests for the `get_published_entries` template tag."""
+    longMessage = True
+
+    def setUp(self):
+        self.entry1 = factories.NewsEntryFactory(language_code='en')
+        new_entry = self.entry1.translate('de')
+        new_entry.title = 'GerTitle'
+        new_entry.is_published = True
+        new_entry.save()
+        self.entry2 = factories.NewsEntryFactory(language_code='en')
+        new_entry = self.entry2.translate('de')
+        new_entry.title = 'GerTitle2'
+        new_entry.is_published = False
+        new_entry.save()
+
+        self.object_list = [self.entry1, self.entry2]
+
+    def test_tag(self):
+        self.assertEqual(
+            get_published_entries(self.object_list, 'de').count(),
+            1, msg=('The tag should have returned only one entry.'))
 
 
 class GetNewsEntryMetaDescriptionTestCase(TestCase):
