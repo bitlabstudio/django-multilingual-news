@@ -1,5 +1,9 @@
 === ongoing ===
 
+
+=== 1.3.1 ===
+
+- Fixed NewsEntry admin
 - Removed failing test for now deprecated templatetag. We will delete this tag
   in version 2 anyways.
 
