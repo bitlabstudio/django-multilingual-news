@@ -115,3 +115,7 @@ CMS_FRONTEND_LANGUAGES = ('en', 'de', )
 CMS_TEMPLATES = (
     ('base.html', 'Standard'),
 )
+
+# settings for localized_names
+LONG_NAME_FORMAT = '{g} {L}, {f}'
+LONG_NAME_FORMAT_NON_ROMAN = '{g} {x}, {a} ({L}, {f})'

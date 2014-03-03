@@ -1,8 +1,11 @@
 """Models for the ``multilingual_news`` app."""
+import re
+
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.utils.html import escape
 from django.utils.timezone import now
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language
 
 from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
 from cms.models.fields import PlaceholderField
@@ -78,7 +81,7 @@ class CategoryPlugin(CMSPlugin):
 
 class NewsEntryManager(TranslationManager):
     """Custom manager for the ``NewsEntry`` model."""
-    def published(self, request, check_language=True):
+    def published(self, request=None, check_language=True, kwargs=None):
         """
         Returns all entries, which publication date has been hit or which have
         no date and which language matches the current language.
@@ -91,12 +94,18 @@ class NewsEntryManager(TranslationManager):
             models.Q(translations__is_published=True),
             models.Q(pub_date__lte=now()) | models.Q(pub_date__isnull=True)
         )
+        if kwargs is not None:
+            qs = qs.filter(**kwargs)
         if check_language:
-            language = get_language_from_request(request)
+            if request is None:
+                language = get_language()
+            else:
+                language = get_language_from_request(request)
             qs = qs.filter(translations__language_code=language)
         return qs.distinct()
 
-    def recent(self, request, check_language=True, limit=3, exclude=None):
+    def recent(self, request=None, check_language=True, limit=3, exclude=None,
+               kwargs=None):
         """
         Returns recently published new entries.
 
@@ -104,11 +113,8 @@ class NewsEntryManager(TranslationManager):
         :param check_language: Option to disable language filtering.
 
         """
-        qs = self.published(request, check_language=check_language)
-        if check_language:
-            # Filter news with current language
-            language = get_language_from_request(request)
-            qs = qs.filter(translations__language_code=language)
+        qs = self.published(request, check_language=check_language,
+                            kwargs=kwargs)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
         return qs[:limit]
@@ -255,6 +261,37 @@ class NewsEntry(TranslatableModel):
                 'year': self.pub_date.year, 'month': self.pub_date.month,
                 'day': self.pub_date.day, 'slug': self.slug})
         return reverse('news_detail', kwargs={'slug': self.slug})
+
+    def get_description(self):
+        """
+        Returns the first available text from either the excerpt or
+        content placeholder.
+
+        """
+        content = ''
+        for plugin in self.excerpt.get_plugins():
+            try:
+                if plugin.text.language == get_language():
+                    content = plugin.text.body
+            except:
+                pass
+            if content:
+                break
+        if not content:
+            for plugin in self.content.get_plugins():
+                try:
+                    if plugin.text.language == get_language():
+                        content = plugin.text.body
+                except:
+                    pass
+                if content:
+                    break
+
+        # remove html tags and escape the rest
+        pattern = re.compile('<.*?>')
+        content = pattern.sub('', content)
+        text = escape(content)
+        return text
 
     def get_preview_url(self):
         slug = self.slug
