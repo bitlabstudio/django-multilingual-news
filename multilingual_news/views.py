@@ -57,6 +57,7 @@ class GetEntriesAjaxView(ListView):
 class NewsListView(ListView):
     """View to display all published and visible news entries."""
     paginate_by = PAGINATION_AMOUNT
+    template_name = 'multilingual_news/newsentry_list.html'
 
     def get_queryset(self):
         return NewsEntry.objects.published(self.request)
