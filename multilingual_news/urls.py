@@ -1,7 +1,7 @@
 """URLs for the ``multilingual_news`` app."""
 from django.conf.urls import patterns, url
 
-from .feeds import AuthorFeed, NewsEntriesFeed
+from .feeds import AuthorFeed, NewsEntriesFeed, TaggedFeed
 from .models import NewsEntry
 from . import views
 
@@ -9,12 +9,11 @@ from . import views
 urlpatterns = patterns(
     '',
     # feed urls
-    # TODO Tagging urls
-    #     url(r'^rss/any/tagged/(?P<tag>[^/]*)/$',
-    #         TaggedNewsEntriesFeed(), {'any_language': True},
-    #         name='blog_rss_any_tagged'),
-    #     url(r'^rss/tagged/(?P<tag>[^/]*)/$',
-    #         TaggedNewsEntriesFeed(), name='blog_rss_tagged'),
+    url(r'^rss/any/tagged/(?P<tag>[^/]*)/$',
+        TaggedFeed(), {'any_language': True},
+        name='news_rss_any_tagged'),
+    url(r'^rss/tagged/(?P<tag>[^/]*)/$',
+        TaggedFeed(), name='news_rss_tagged'),
     url(r'^rss/any/author/(?P<author>\d+)/$',
         AuthorFeed(), {'any_language': True},
         name='news_rss_any_author'),

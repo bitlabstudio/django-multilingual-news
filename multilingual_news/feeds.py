@@ -1,11 +1,13 @@
 """RSS feeds for the `multilingual_news` app."""
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import get_current_site
 from django.contrib.syndication.views import Feed
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from cms.utils import get_language_from_request
+from multilingual_tags.models import Tag, TaggedItem
 from people.models import Person
 
 from .models import NewsEntry
@@ -105,3 +107,42 @@ class AuthorFeed(NewsEntriesFeed):
         return NewsEntry.objects.recent(limit=10,
                                         check_language=check_language,
                                         kwargs={'author': self.author})
+
+
+class TaggedFeed(NewsEntriesFeed):
+    """A news feed, that shows only entries with a special tag."""
+    title_template = 'multilingual_news/feed/author_title.html'
+    description_template = 'multilingual_news/feed/author_description.html'
+
+    def get_object(self, request, **kwargs):
+        super(TaggedFeed, self).get_object(request, **kwargs)
+        # Needs no try. If the tag does not exist, we automatically get a
+        # 404 response.
+        self.tag = Tag.objects.get(slug=kwargs.get('tag'))
+
+    def title(self, obj):
+        title = super(TaggedFeed, self).title(obj)
+        return _(u'{0} by {1}'.format(title, self.tag.name))
+
+    def feed_url(self, obj):
+        if is_multilingual() or self.any_language:
+            return reverse('news_rss_any_tagged', kwargs={
+                'tag': self.tag.slug, 'any_language': True})
+        return reverse('news_rss_tagged', kwargs={'tag': self.tag.slug})
+
+    def link(self, obj):
+        return reverse('news_archive_tagged', kwargs={'tag': self.tag.slug})
+
+    def description(self, obj):
+        description = super(TaggedFeed, self).description(obj)
+        return _(u'{0} by {1}'.format(description, self.tag.name))
+
+    def get_queryset(self, obj):
+        content_type = ContentType.objects.get_for_model(NewsEntry)
+        tagged_items = TaggedItem.objects.filter(
+            content_type=content_type, tag=self.tag)
+        entries = []
+        for tagged_item in tagged_items:
+            if tagged_item.object.is_public():
+                entries.append(tagged_item.object)
+        return entries[:10]

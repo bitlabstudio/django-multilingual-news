@@ -5,6 +5,7 @@ from django.core.urlresolvers import NoReverseMatch
 
 # Note: The feeds can't be tested with the ViewRequestFactoryTestMixin
 from django_libs.tests.mixins import ViewTestMixin
+from multilingual_tags.tests.factories import TaggedItemFactory
 from people.tests.factories import PersonFactory
 
 from . import factories
@@ -99,3 +100,45 @@ class AuthorFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
     def test_author_does_not_exist(self):
         self.author.delete()
         self.assertRaises(NoReverseMatch, self.is_callable)
+
+
+class TaggedFeedTestCase(ViewTestMixin, TestCase):
+    """Tests for the ``TaggedFeed`` view class."""
+
+    def setUp(self):
+        entry = factories.NewsEntryFactory()
+        self.tagged_item = TaggedItemFactory(object=entry)
+
+    def get_view_kwargs(self):
+        return {'tag': self.tagged_item.tag.slug}
+
+    def get_view_name(self):
+        return 'news_rss_tagged'
+
+    def test_view_multilingual(self):
+        self.is_callable()
+
+    @override_settings(MIDDLEWARE_CLASSES=NON_MULTILINGUAL_MIDDLWARE_CLASSES)
+    def test_view(self):
+        self.is_callable()
+
+
+class TaggedFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
+    """Tests for the ``TaggedFeed`` view class."""
+
+    def setUp(self):
+        entry = factories.NewsEntryFactory()
+        self.tagged_item = TaggedItemFactory(object=entry)
+
+    def get_view_name(self):
+        return 'news_rss_any_tagged'
+
+    def get_view_kwargs(self):
+        return {'tag': self.tagged_item.tag.slug, 'any_language': True}
+
+    def test_view(self):
+        self.is_callable()
+
+    def test_tag_does_not_exist(self):
+        self.tagged_item.tag.delete()
+        self.is_not_callable()
