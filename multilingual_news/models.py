@@ -303,7 +303,7 @@ class NewsEntry(TranslatableModel):
 
         """
         return self.is_published and (
-            self.pub_date <= now() or self.pub_date is None)
+            self.pub_date is None or self.pub_date <= now())
 
 
 class RecentPlugin(CMSPlugin):
