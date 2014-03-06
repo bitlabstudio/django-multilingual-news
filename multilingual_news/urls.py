@@ -17,12 +17,12 @@ urlpatterns = patterns(
     #         TaggedNewsEntriesFeed(), name='blog_rss_tagged'),
     url(r'^rss/any/author/(?P<author>\d+)/$',
         AuthorFeed(), {'any_language': True},
-        name='blog_rss_any_author'),
+        name='news_rss_any_author'),
     url(r'^rss/author/(?P<author>\d+)/$',
-        AuthorFeed(), name='blog_rss_author'),
+        AuthorFeed(), name='news_rss_author'),
     url(r'^rss/any/$', NewsEntriesFeed(), {'any_language': True},
-        name='blog_rss_any'),
-    url(r'^rss/$', NewsEntriesFeed(), name='blog_rss'),
+        name='news_rss_any'),
+    url(r'^rss/$', NewsEntriesFeed(), name='news_rss'),
 
     # regular urls
     url(r'^category/(?P<category>[^/]*)/',

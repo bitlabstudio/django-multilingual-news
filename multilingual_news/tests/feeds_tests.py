@@ -31,7 +31,7 @@ class NewsEntriesFeedTestCase(ViewTestMixin, TestCase):
         factories.NewsEntryFactory()
 
     def get_view_name(self):
-        return 'blog_rss'
+        return 'news_rss'
 
     def test_view_multilingual(self):
         self.is_callable()
@@ -48,7 +48,7 @@ class NewsEntriesFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
         factories.NewsEntryFactory()
 
     def get_view_name(self):
-        return 'blog_rss_any'
+        return 'news_rss_any'
 
     def get_view_kwargs(self):
         return {'any_language': True}
@@ -69,7 +69,7 @@ class AuthorFeedTestCase(ViewTestMixin, TestCase):
         return {'author': self.author.id}
 
     def get_view_name(self):
-        return 'blog_rss_author'
+        return 'news_rss_author'
 
     def test_view_multilingual(self):
         self.is_callable()
@@ -87,7 +87,7 @@ class AuthorFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
         self.author = PersonFactory()
 
     def get_view_name(self):
-        return 'blog_rss_any_author'
+        return 'news_rss_any_author'
 
     def get_view_kwargs(self):
         # TODO ID is no pretty solution

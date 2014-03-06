@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.contrib.syndication.views import Feed
 from django.core.urlresolvers import reverse
-from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
 from cms.utils import get_language_from_request
@@ -33,8 +32,8 @@ class NewsEntriesFeed(Feed):
 
     def feed_url(self, item):
         if is_multilingual() or self.any_language:
-            return reverse('blog_rss_any', kwargs={'any_language': True})
-        return reverse('blog_rss')
+            return reverse('news_rss_any', kwargs={'any_language': True})
+        return reverse('news_rss')
 
     def title(self, item):
         if self.any_language or not is_multilingual():
@@ -86,9 +85,9 @@ class AuthorFeed(NewsEntriesFeed):
 
     def feed_url(self, obj):
         if is_multilingual() or self.any_language:
-            return reverse('blog_rss_any_author', kwargs={
+            return reverse('news_rss_any_author', kwargs={
                 'author': self.author.id, 'any_language': True})
-        return reverse('blog_rss_author', kwargs={'author': self.author.id})
+        return reverse('news_rss_author', kwargs={'author': self.author.id})
 
     def link(self, obj):
         # TODO Author specific archive
