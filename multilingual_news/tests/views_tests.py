@@ -6,6 +6,7 @@ from django_libs.tests.mixins import (
     ViewRequestFactoryTestMixin,
     ViewTestMixin,
 )
+from multilingual_tags.tests.factories import TaggedItemFactory
 
 from . import factories
 from .. import models
@@ -59,17 +60,20 @@ class NewsListViewTestCase(ViewTestMixin, TestCase):
 
 class TaggedNewsListViewTestCase(ViewTestMixin, TestCase):
     """Tests for the ``NewsListView`` view."""
+
     def setUp(self):
-        factories.NewsEntryFactory()
+        entry = factories.NewsEntryFactory()
+        self.tagged_item = TaggedItemFactory(object=entry)
 
     def get_view_name(self):
         return 'news_archive_tagged'
 
     def get_view_kwargs(self):
-        return {'tag': 'foobar'}
+        return {'tag': self.tagged_item.tag.slug}
 
     def test_view(self):
         self.should_be_callable_when_anonymous()
+        self.is_callable(kwargs={'tag': 'foobar'})
 
 
 class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
