@@ -36,6 +36,7 @@ setup(
         'South',
         'django-document-library',
         'django-people',
+        'django-multilingual-tags',
     ],
     dependency_links=[
         'https://github.com/divio/django-cms/tarball/develop',

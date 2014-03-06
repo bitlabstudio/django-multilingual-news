@@ -12,6 +12,7 @@ except ImportError:
 from cms.admin.placeholderadmin import PlaceholderAdmin
 from document_library.admin import AttachmentInline
 from hvad.admin import TranslatableAdmin
+from multilingual_tags.admin import TaggedItemInline
 
 from .models import Category, NewsEntry
 
@@ -25,10 +26,9 @@ class CategoryAdmin(TranslatableAdmin):
 
 
 class NewsEntryAdmin(FrontendEditableAdmin,
-                     PlaceholderAdmin,
-                     TranslatableAdmin):
+                     PlaceholderAdmin, TranslatableAdmin):
     """Admin class for the ``NewsEntry`` model."""
-    inlines = [AttachmentInline]
+    inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
         'get_title', 'pub_date', 'author', 'get_is_published',
         'all_translations']
