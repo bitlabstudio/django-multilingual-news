@@ -3,13 +3,7 @@ from django.conf.urls import patterns, url
 
 from .feeds import AuthorFeed, NewsEntriesFeed
 from .models import NewsEntry
-from .views import (
-    CategoryListView,
-    GetEntriesAjaxView,
-    NewsDateDetailView,
-    NewsDetailView,
-    NewsListView,
-)
+from . import views
 
 
 urlpatterns = patterns(
@@ -32,21 +26,24 @@ urlpatterns = patterns(
 
     # regular urls
     url(r'^category/(?P<category>[^/]*)/',
-        CategoryListView.as_view(),
+        views.CategoryListView.as_view(),
         name='news_archive_category',),
     url(r'^get-entries/',
-        GetEntriesAjaxView.as_view(),
+        views.GetEntriesAjaxView.as_view(),
         name='news_get_entries',),
     url(r'^(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/(?P<slug>[\w-]+)/$',
-        NewsDateDetailView.as_view(),
+        views.NewsDateDetailView.as_view(),
         name='news_detail'),
     url(r'^(?P<slug>[\w-]+)/$',
-        NewsDetailView.as_view(),
+        views.NewsDetailView.as_view(),
         name='news_detail'),
     url(r'^preview/(?P<slug>[\w-]+)/$',
-        NewsDetailView.as_view(queryset=NewsEntry.objects.all()),
+        views.NewsDetailView.as_view(queryset=NewsEntry.objects.all()),
         name='news_preview'),
+    url(r'^tag/(?P<tag>[\w-]+)$',
+        views.TaggedNewsListView.as_view(),
+        name='news_archive_tagged'),
     url(r'^$',
-        NewsListView.as_view(),
+        views.NewsListView.as_view(),
         name='news_list'),
 )

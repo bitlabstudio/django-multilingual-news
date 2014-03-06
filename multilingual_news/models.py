@@ -297,6 +297,14 @@ class NewsEntry(TranslatableModel):
         slug = self.slug
         return reverse('news_preview', kwargs={'slug': slug})
 
+    def is_public(self):
+        """
+        Returns True, if the entry is considered public.
+
+        """
+        return self.is_published and (
+            self.pub_date <= now() or self.pub_date is None)
+
 
 class RecentPlugin(CMSPlugin):
     """Plugin model to display recent news."""

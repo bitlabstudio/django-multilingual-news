@@ -96,6 +96,7 @@ EXTERNAL_APPS = [
     'hvad',
     'document_library',
     'people',
+    'multilingual_tags',
 ]
 
 INTERNAL_APPS = [

@@ -57,6 +57,21 @@ class NewsListViewTestCase(ViewTestMixin, TestCase):
         self.should_be_callable_when_anonymous()
 
 
+class TaggedNewsListViewTestCase(ViewTestMixin, TestCase):
+    """Tests for the ``NewsListView`` view."""
+    def setUp(self):
+        factories.NewsEntryFactory()
+
+    def get_view_name(self):
+        return 'news_archive_tagged'
+
+    def get_view_kwargs(self):
+        return {'tag': 'foobar'}
+
+    def test_view(self):
+        self.should_be_callable_when_anonymous()
+
+
 class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
     """Tests for the ``NewsDateDetailView`` view."""
     def setUp(self):
