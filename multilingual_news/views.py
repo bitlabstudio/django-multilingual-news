@@ -1,10 +1,7 @@
 """Views for the ``multilingual_news`` app."""
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import get_language
 from django.views.generic import DateDetailView, DetailView, ListView
-
-from multilingual_tags.models import Tag, TaggedItem
 
 from .app_settings import PAGINATION_AMOUNT
 from .models import Category, NewsEntry
@@ -73,18 +70,8 @@ class TaggedNewsListView(ListView):
     template_name = 'multilingual_news/newsentry_list.html'
 
     def get_queryset(self):
-        try:
-            tag = Tag.objects.get(slug=self.kwargs.get('tag'))
-        except Tag.DoesNotExist:
-            return []
-        content_type = ContentType.objects.get_for_model(NewsEntry)
-        tagged_items = TaggedItem.objects.filter(
-            content_type=content_type, tag=tag)
-        entries = []
-        for tagged_item in tagged_items:
-            if tagged_item.object.is_public():
-                entries.append(tagged_item.object)
-        return entries
+        return NewsEntry.objects.language(get_language()).filter(
+            tags__tag__slug=self.kwargs.get('tag'))
 
 
 class DetailViewMixin(object):

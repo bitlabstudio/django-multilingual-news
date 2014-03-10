@@ -2,15 +2,17 @@
 import re
 
 from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.generic import GenericRelation
 from django.db import models
 from django.utils.html import escape
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _, get_language
 
-from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
 from cms.models.fields import PlaceholderField
 from cms.models import CMSPlugin
 from filer.fields.image import FilerImageField
+from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
+from multilingual_tags.models import TaggedItem
 
 
 class Category(TranslatableModel):
@@ -236,6 +238,7 @@ class NewsEntry(TranslatableModel):
         blank=True, null=True,
     )
 
+    tags = GenericRelation(TaggedItem)
     objects = NewsEntryManager()
 
     class Meta:
