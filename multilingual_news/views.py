@@ -1,6 +1,7 @@
 """Views for the ``multilingual_news`` app."""
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
+from django.utils.translation import get_language
 from django.views.generic import DateDetailView, DetailView, ListView
 
 from multilingual_tags.models import Tag, TaggedItem
@@ -89,7 +90,10 @@ class TaggedNewsListView(ListView):
 class DetailViewMixin(object):
     """Mixin to handle different DetailView variations."""
     model = NewsEntry
-    slug_field = 'translations__slug'
+    slug_field = 'slug'
+
+    def get_queryset(self, **kwargs):
+        return NewsEntry.objects.language(get_language())
 
 
 class NewsDateDetailView(DetailViewMixin, DateDetailView):
