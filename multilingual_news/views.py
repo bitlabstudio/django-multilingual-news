@@ -44,7 +44,7 @@ class GetEntriesAjaxView(ListView):
             request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = NewsEntry.objects.published(self.request)
+        qs = NewsEntry.objects.published()
         if self.category:
             qs = qs.filter(
                 Q(categories__slug=self.category) |
@@ -60,7 +60,7 @@ class NewsListView(ListView):
     template_name = 'multilingual_news/newsentry_list.html'
 
     def get_queryset(self):
-        return NewsEntry.objects.published(self.request)
+        return NewsEntry.objects.published()
 
 
 class TaggedNewsListView(ListView):
@@ -91,9 +91,6 @@ class DetailViewMixin(object):
     model = NewsEntry
     slug_field = 'translations__slug'
 
-    def get_queryset(self):
-        return NewsEntry.objects.published(self.request, False)
-
 
 class NewsDateDetailView(DetailViewMixin, DateDetailView):
     """View to display one news entry with publication date."""
@@ -104,3 +101,12 @@ class NewsDateDetailView(DetailViewMixin, DateDetailView):
 class NewsDetailView(DetailViewMixin, DetailView):
     """View to display one news entry without publication date."""
     pass
+
+
+class NewsDetailPreviewView(NewsDetailView):
+    """View to display one news entry that is not public yet."""
+
+    def get_context_data(self, **kwargs):
+        ctx = super(NewsDetailPreviewView, self).get_context_data(**kwargs)
+        ctx.update({'preview': 1})
+        return ctx

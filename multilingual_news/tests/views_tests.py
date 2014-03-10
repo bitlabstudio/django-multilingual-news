@@ -127,3 +127,23 @@ class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
             'month': self.entry.pub_date.month,
             'day': self.entry.pub_date.day,
         }
+
+
+class NewsDetailPreviewViewTestCase(ViewTestMixin, TestCase):
+    """Test for the `NewsDetailPreviewView` view class."""
+
+    def get_view_name(self):
+        return 'news_preview'
+
+    def get_view_kwargs(self):
+        return {
+            'slug': self.en_trans.slug,
+        }
+
+    def setUp(self):
+        self.entry = factories.NewsEntryFactory(
+            pub_date=now() - timedelta(days=1))
+        self.en_trans = self.entry.translations.get(language_code='en')
+
+    def test_view(self):
+        self.should_be_callable_when_anonymous()
