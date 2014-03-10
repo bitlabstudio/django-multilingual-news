@@ -11,9 +11,8 @@ register = template.Library()
 
 
 @register.assignment_tag
-def get_published_entries(object_list, language_code):
-    return NewsEntry.objects.language(language_code).filter(pk__in=[
-        obj.pk for obj in object_list], is_published=True)
+def get_published_entries(object_list, language_code=None):
+    return NewsEntry.objects.published(language=language_code)
 
 
 @register.simple_tag

@@ -33,9 +33,14 @@ class GetPublishedEntriesTestCase(TestCase):
         self.object_list = [self.entry1, self.entry2]
 
     def test_tag(self):
+        # retrieve the one german entry
         self.assertEqual(
             get_published_entries(self.object_list, 'de').count(),
             1, msg=('The tag should have returned only one entry.'))
+        # retrieve the two english entries
+        self.assertEqual(
+            get_published_entries(self.object_list).count(),
+            2, msg=('The tag should have returned two entries.'))
 
 
 class GetNewsEntryMetaDescriptionTestCase(TestCase):
