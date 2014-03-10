@@ -3,7 +3,7 @@ from django.contrib.sitemaps import Sitemap
 from .models import NewsEntry
 
 
-class NewsSitemap(Sitemap):
+class NewsSitemap(Sitemap):  # pragma: nocover
     changefreq = "monthly"
     priority = 0.5
 
