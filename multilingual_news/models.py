@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _, get_language
 from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
 from cms.models.fields import PlaceholderField
 from cms.models import CMSPlugin
-from cms.utils import get_language_from_request
 from filer.fields.image import FilerImageField
 
 
@@ -50,7 +49,7 @@ class Category(TranslatableModel):
     def get_entries(self):
         """Returns the entries for this category."""
         return self.newsentries.filter(
-            translations__is_published=True, pub_date__lte=now()) .order_by(
+            translations__is_published=True, pub_date__lte=now()).order_by(
             '-pub_date').distinct()
 
     def get_absolute_url(self):
@@ -81,39 +80,31 @@ class CategoryPlugin(CMSPlugin):
 
 class NewsEntryManager(TranslationManager):
     """Custom manager for the ``NewsEntry`` model."""
-    def published(self, request=None, check_language=True, kwargs=None):
+    def published(self, check_language=True, language=None, kwargs=None):
         """
         Returns all entries, which publication date has been hit or which have
         no date and which language matches the current language.
 
-        :param request: A Request instance.
-        :param check_language: Option to disable language filtering.
-
         """
-        qs = self.get_query_set().filter(
-            models.Q(translations__is_published=True),
+        if check_language:
+            qs = NewsEntry.objects.language(language or get_language()).filter(
+                is_published=True)
+        else:
+            qs = self.get_queryset()
+        qs = qs.filter(
             models.Q(pub_date__lte=now()) | models.Q(pub_date__isnull=True)
         )
         if kwargs is not None:
             qs = qs.filter(**kwargs)
-        if check_language:
-            if request is None:
-                language = get_language()
-            else:
-                language = get_language_from_request(request)
-            qs = qs.filter(translations__language_code=language)
-        return qs.distinct()
+        return qs.distinct().order_by('-pub_date')
 
-    def recent(self, request=None, check_language=True, limit=3, exclude=None,
+    def recent(self, check_language=True, language=None, limit=3, exclude=None,
                kwargs=None):
         """
         Returns recently published new entries.
 
-        :param request: A Request instance.
-        :param check_language: Option to disable language filtering.
-
         """
-        qs = self.published(request, check_language=check_language,
+        qs = self.published(check_language=check_language, language=language,
                             kwargs=kwargs)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)

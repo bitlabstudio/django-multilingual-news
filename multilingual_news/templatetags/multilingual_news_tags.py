@@ -38,7 +38,6 @@ def get_newsentry_meta_title(newsentry):
 @register.assignment_tag(takes_context=True)
 def get_recent_news(context, check_language=True, limit=3, exclude=None):
     qs = NewsEntry.objects.recent(
-        context['request'],
         check_language=check_language,
         limit=limit,
         exclude=exclude)
