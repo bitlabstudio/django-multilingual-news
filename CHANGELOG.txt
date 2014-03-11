@@ -1,6 +1,31 @@
 === ongoing ===
 
 
+=== 2.0 ===
+
+Backwards incompatible:
+- added authors based on django-people
+  * removes old authors FK to auth.User and adds FK to people.Person instead.
+    If you want to keep all the authors, you may need to create the respective
+    Persons yourself and make a datamigration before migration 0016.
+    Check migrations 0014-0016 for more details.
+
+Features:
+- added attachments based on django-document-library
+- added tagging with django-multilingual-tags
+- added a tag based list view
+- added categories
+- added RSS Feeds
+- added NewsSitemap
+- added SEO fields and tags
+- split news entry detail view and made another dedicated preview view, adding
+  "preview" to the template context
+
+Fixes:
+- improved managers by using language aware hvad managers
+- fixed NewsEntry.is_public
+- fixed some get_absolute_url methods
+
 === 1.3.1 ===
 
 - Fixed NewsEntry admin
