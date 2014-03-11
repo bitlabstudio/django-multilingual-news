@@ -1,5 +1,9 @@
 """Settings that need to be set in order to run the tests."""
 import os
+import logging
+
+
+logging.getLogger("factory").setLevel(logging.WARN)
 
 DEBUG = True
 
@@ -54,10 +58,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
-    'cms.middleware.page.CurrentPageMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -83,11 +87,16 @@ EXTERNAL_APPS = [
     'django_nose',
     'djangocms_text_ckeditor',  # must come before cms
     'cms',
+    'djangocms_link',
     'sekizai',
     'menus',
     'mptt',
     'filer',
     'easy_thumbnails',
+    'hvad',
+    'document_library',
+    'people',
+    'multilingual_tags',
 ]
 
 INTERNAL_APPS = [
@@ -107,3 +116,7 @@ CMS_FRONTEND_LANGUAGES = ('en', 'de', )
 CMS_TEMPLATES = (
     ('base.html', 'Standard'),
 )
+
+# settings for localized_names
+LONG_NAME_FORMAT = '{g} {L}, {f}'
+LONG_NAME_FORMAT_NON_ROMAN = '{g} {x}, {a} ({L}, {f})'

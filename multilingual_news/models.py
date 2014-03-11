@@ -1,49 +1,113 @@
 """Models for the ``multilingual_news`` app."""
-from django.core.urlresolvers import reverse
-from django.db import models
-from django.utils.timezone import now
-from django.utils.translation import ugettext_lazy as _
+import re
 
-from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
+from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.generic import GenericRelation
+from django.db import models
+from django.utils.html import escape
+from django.utils.timezone import now
+from django.utils.translation import ugettext_lazy as _, get_language
+
 from cms.models.fields import PlaceholderField
 from cms.models import CMSPlugin
-from cms.utils import get_language_from_request
 from filer.fields.image import FilerImageField
+from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
+from multilingual_tags.models import TaggedItem
+
+
+class Category(TranslatableModel):
+    """
+    A blog ``Entry`` can belong to one category.
+
+    :creation_date: Date when this category was created.
+    :slug: The slug for this category. The slug will be the same for all
+      languages.
+    :parent: Allows you to build hierarchies of categories.
+
+    """
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    slug = models.SlugField(
+        max_length=512,
+        verbose_name=_('Slug'),
+    )
+
+    parent = models.ForeignKey(
+        'multilingual_news.Category',
+        verbose_name=_('Parent'),
+        null=True, blank=True,
+    )
+
+    translations = TranslatedFields(
+        title=models.CharField(
+            max_length=256,
+            verbose_name=_('Title'),
+        )
+    )
+
+    def __unicode__(self):
+        return self.safe_translation_getter('title', self.slug)
+
+    def get_entries(self):
+        """Returns the entries for this category."""
+        return self.newsentries.filter(
+            translations__is_published=True, pub_date__lte=now()).order_by(
+            '-pub_date').distinct()
+
+    def get_absolute_url(self):
+        return reverse('news_archive_category', kwargs={
+            'category': self.slug, })
+
+
+class CategoryPlugin(CMSPlugin):
+    """
+    Plugin, which renders entries belonging to one or more category.
+
+    :categories: ...
+    :template_argument: Char which is place within templates as True, if you
+      want to alter a template.
+
+    """
+    categories = models.ManyToManyField(
+        Category,
+        verbose_name=_('Category'),
+    )
+
+    template_argument = models.CharField(
+        max_length=20,
+        verbose_name=_('Template Argument'),
+        blank=True,
+    )
 
 
 class NewsEntryManager(TranslationManager):
     """Custom manager for the ``NewsEntry`` model."""
-    def published(self, request, check_language=True):
+    def published(self, check_language=True, language=None, kwargs=None):
         """
         Returns all entries, which publication date has been hit or which have
         no date and which language matches the current language.
 
-        :param request: A Request instance.
-        :param check_language: Option to disable language filtering.
-
         """
-        qs = self.get_query_set().filter(
-            models.Q(translations__is_published=True),
+        if check_language:
+            qs = NewsEntry.objects.language(language or get_language()).filter(
+                is_published=True)
+        else:
+            qs = self.get_queryset()
+        qs = qs.filter(
             models.Q(pub_date__lte=now()) | models.Q(pub_date__isnull=True)
         )
-        if check_language:
-            language = get_language_from_request(request)
-            qs = qs.filter(translations__language_code=language)
-        return qs.distinct()
+        if kwargs is not None:
+            qs = qs.filter(**kwargs)
+        return qs.distinct().order_by('-pub_date')
 
-    def recent(self, request, check_language=True, limit=3, exclude=None):
+    def recent(self, check_language=True, language=None, limit=3, exclude=None,
+               kwargs=None):
         """
         Returns recently published new entries.
 
-        :param request: A Request instance.
-        :param check_language: Option to disable language filtering.
-
         """
-        qs = self.published(request, check_language=check_language)
-        if check_language:
-            # Filter news with current language
-            language = get_language_from_request(request)
-            qs = qs.filter(translations__language_code=language)
+        qs = self.published(check_language=check_language, language=language,
+                            kwargs=kwargs)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
         return qs[:limit]
@@ -55,7 +119,8 @@ class NewsEntry(TranslatableModel):
 
     See ``NewsEntryTitle`` for the translateable fields of this model.
 
-    :author: Optional FK to the User who created this entry.
+    :author: Optional FK to the Person, who created this NewsEntry.
+    :category: The optional category this entry belongs to.
     :pub_date: DateTime when this entry should be published.
     :image: Main image of the blog entry.
     :image_float: Can be set to ``none``, ``left`` or ``right`` to adjust
@@ -64,7 +129,10 @@ class NewsEntry(TranslatableModel):
     :image_height: Can be set to manipulate image height
     :image_source_text: Text for the link to the image source
     :image_source_url: URL for the link to the image source
-    :placeholders: CMS placeholders for ``exerpt`` and ``content``
+    :content: CMS placeholder for ``content``
+    :excerpt: CMS placeholder for ``excerpt``
+    :meta_title: the title, that goes into the meta tags.
+    :meta_description: the description, that goes into the meta tags.
 
     """
     IMAGE_FLOAT_VALUES = {
@@ -92,12 +160,31 @@ class NewsEntry(TranslatableModel):
             verbose_name=_('Is published'),
             default=False,
         ),
+        meta_title=models.CharField(
+            verbose_name=_('Meta title'),
+            help_text=_('Best to keep this below 70 characters'),
+            max_length=128,
+            blank=True, null=True,
+        ),
+        meta_description=models.TextField(
+            verbose_name=_('Meta description'),
+            help_text=_('Best to keep this below 160 characters'),
+            max_length=512,
+            blank=True, null=True,
+        )
     )
 
     author = models.ForeignKey(
-        'auth.User',
+        'people.Person',
         verbose_name=_('Author'),
-        null=True, blank=True,
+        blank=True, null=True,
+    )
+
+    categories = models.ManyToManyField(
+        Category,
+        verbose_name=_('Categories'),
+        related_name='newsentries',
+        blank=True, null=True,
     )
 
     pub_date = models.DateTimeField(
@@ -140,38 +227,77 @@ class NewsEntry(TranslatableModel):
     )
 
     excerpt = PlaceholderField(
-        slotname='multilingnual_news_excerpt',
+        slotname='multilingual_news_excerpt',
         related_name='multilingual_news_excerpts',
         blank=True, null=True,
     )
 
     content = PlaceholderField(
-        slotname='multilingnual_news_content',
+        slotname='multilingual_news_content',
         related_name='multilingual_news_contents',
         blank=True, null=True,
     )
 
+    tags = GenericRelation(TaggedItem)
     objects = NewsEntryManager()
 
     class Meta:
         ordering = ('-pub_date', )
 
     def __unicode__(self):
-        return self.title
+        return self.safe_translation_getter('title', 'Untranslated entry')
 
     def get_absolute_url(self):
         if not self.is_published:
             return self.get_preview_url()
-        slug = self.slug
         if self.pub_date:
             return reverse('news_detail', kwargs={
                 'year': self.pub_date.year, 'month': self.pub_date.month,
-                'day': self.pub_date.day, 'slug': slug})
-        return reverse('news_detail', kwargs={'slug': slug})
+                'day': self.pub_date.day, 'slug': self.slug})
+        return reverse('news_detail', kwargs={'slug': self.slug})
+
+    def get_description(self):
+        """
+        Returns the first available text from either the excerpt or
+        content placeholder.
+
+        """
+        content = ''
+        for plugin in self.excerpt.get_plugins():
+            try:
+                if plugin.text.language == get_language():
+                    content = plugin.text.body
+            except:
+                pass
+            if content:
+                break
+        if not content:
+            for plugin in self.content.get_plugins():
+                try:
+                    if plugin.text.language == get_language():
+                        content = plugin.text.body
+                except:
+                    pass
+                if content:
+                    break
+
+        # remove html tags and escape the rest
+        pattern = re.compile('<.*?>')
+        content = pattern.sub('', content)
+        text = escape(content)
+        return text
 
     def get_preview_url(self):
         slug = self.slug
         return reverse('news_preview', kwargs={'slug': slug})
+
+    def is_public(self):
+        """
+        Returns True, if the entry is considered public.
+
+        """
+        return self.is_published and (
+            self.pub_date is None or self.pub_date <= now())
 
 
 class RecentPlugin(CMSPlugin):

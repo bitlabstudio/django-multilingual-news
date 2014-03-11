@@ -1,9 +1,19 @@
 """Tests for the models of the ``multilingual_news`` app."""
 from django.core.urlresolvers import reverse
-from django.test import TestCase, RequestFactory
+from django.test import TestCase
 
 from .. import models
 from . import factories
+
+
+class CategoryTestCase(TestCase):
+    """Tests for the ``Category`` model class."""
+    longMessage = True
+
+    def test_instantiation(self):
+        """Test instantiation of the ``Category`` model."""
+        category = factories.CategoryFactory()
+        self.assertTrue(category.pk)
 
 
 class NewsEntryTestCase(TestCase):
@@ -34,44 +44,33 @@ class NewsEntryManagerTestCase(TestCase):
         factories.NewsEntryFactory(language_code='de', is_published=True)
 
     def test_published(self):
-        request = RequestFactory().get('/')
-        request.LANGUAGE_CODE = 'de'
         self.assertEqual(
-            models.NewsEntry.objects.published(request).count(), 2, msg=(
+            models.NewsEntry.objects.published(language='de').count(), 2, msg=(
                 'In German, there should be two published entries.'))
 
-        request = RequestFactory().get('/')
-        request.LANGUAGE_CODE = 'en'
         self.assertEqual(
-            models.NewsEntry.objects.published(request).count(), 1, msg=(
+            models.NewsEntry.objects.published(language='en').count(), 1, msg=(
                 'In English, there should be one published entry.'))
 
-        request = RequestFactory().get('/')
-        request.LANGUAGE_CODE = None
         self.assertEqual(
-            models.NewsEntry.objects.published(request).count(), 1, msg=(
+            models.NewsEntry.objects.published().count(), 1, msg=(
                 'If no language set, we get the ones for the default'
                 ' language.'))
 
     def test_recent(self):
-        request = RequestFactory().get('/')
-        result = models.NewsEntry.objects.recent(request)
+        result = models.NewsEntry.objects.recent()
         self.assertEqual(result.count(), 1, msg=(
             'Should return recent objects for the default language'))
 
-        request = RequestFactory().get('/')
-        request.LANGUAGE_CODE = 'de'
-        result = models.NewsEntry.objects.recent(request)
+        result = models.NewsEntry.objects.recent(language='de')
         self.assertEqual(result.count(), 2, msg=(
             'Should return recent objects for the German language'))
 
-        request = RequestFactory().get('/')
-        result = models.NewsEntry.objects.recent(request, check_language=False)
+        result = models.NewsEntry.objects.recent(check_language=False)
         self.assertEqual(result.count(), 3, msg=(
             'Should return recent objects for all languages'))
 
-        request = RequestFactory().get('/')
         result = models.NewsEntry.objects.recent(
-            request, check_language=False, exclude=self.published_en)
+            check_language=False, exclude=self.published_en)
         self.assertEqual(result.count(), 2, msg=(
             'Should exclude the given object'))

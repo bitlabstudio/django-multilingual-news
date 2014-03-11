@@ -10,17 +10,29 @@ except ImportError:
     FrontendEditableAdmin = Object
 
 from cms.admin.placeholderadmin import PlaceholderAdmin
+from document_library.admin import AttachmentInline
 from hvad.admin import TranslatableAdmin
+from multilingual_tags.admin import TaggedItemInline
 
-from .models import NewsEntry
+from .models import Category, NewsEntry
+
+
+class CategoryAdmin(TranslatableAdmin):
+    list_display = ['get_title', 'all_translations', ]
+
+    def get_title(self, obj):
+        return obj.title
+    get_title.short_description = _('Title')
 
 
 class NewsEntryAdmin(TranslatableAdmin,
                      FrontendEditableAdmin,
                      PlaceholderAdmin):
     """Admin class for the ``NewsEntry`` model."""
+    inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
-        'get_title', 'pub_date', 'get_is_published', 'all_translations']
+        'get_title', 'pub_date', 'author', 'get_is_published',
+        'all_translations']
 
     def get_is_published(self, obj):
         return obj.is_published
@@ -31,4 +43,5 @@ class NewsEntryAdmin(TranslatableAdmin,
     get_title.short_description = _('Title')
 
 
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(NewsEntry, NewsEntryAdmin)

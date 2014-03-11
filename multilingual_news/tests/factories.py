@@ -10,17 +10,26 @@ from .. import models
 from .test_app.models import DummyModel
 
 
-class DummyModelFactory(factory.Factory):
+class DummyModelFactory(factory.DjangoModelFactory):
     """Factory for the ``DummyModel`` model."""
     FACTORY_FOR = DummyModel
 
 
-class PlaceholderFactory(factory.Factory):
+class CategoryFactory(HvadFactoryMixin, factory.DjangoModelFactory):
+    """Factory for the ``Category`` model."""
+    FACTORY_FOR = models.Category
+
+    slug = factory.Sequence(lambda n: 'slug-{0}'.format(n))
+    title = factory.Sequence(lambda n: 'title {0}'.format(n))
+    language_code = 'en'
+
+
+class PlaceholderFactory(factory.DjangoModelFactory):
     """Factory for the ``Placeholder`` model."""
     FACTORY_FOR = Placeholder
 
 
-class TextPluginFactory(factory.Factory):
+class TextPluginFactory(factory.DjangoModelFactory):
     """Factory for the ``Text`` model."""
     FACTORY_FOR = Text
 

@@ -2,10 +2,48 @@
 from django.test import TestCase
 from django.utils.timezone import timedelta, now
 
-from django_libs.tests.mixins import ViewTestMixin
+from django_libs.tests.mixins import (
+    ViewRequestFactoryTestMixin,
+    ViewTestMixin,
+)
+from multilingual_tags.tests.factories import TaggedItemFactory
 
 from . import factories
 from .. import models
+from .. import views
+
+
+class CategoryListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
+    """Tests for the ``CategoryListView`` generic view class."""
+    view_class = views.CategoryListView
+
+    def setUp(self):
+        self.category = factories.CategoryFactory()
+        self.entry = factories.NewsEntryFactory(category=self.category)
+
+    def get_view_name(self):
+        return 'news_archive_category'
+
+    def get_view_kwargs(self):
+        return {'category': self.category.slug}
+
+    def test_view(self):
+        self.is_callable()
+
+
+class GetEntriesAjaxViewTestCase(ViewRequestFactoryTestMixin, TestCase):
+    """Tests for the ``GetEntriesAjaxView`` view class."""
+    view_class = views.GetEntriesAjaxView
+
+    def get_view_name(self):
+        return 'news_get_entries'
+
+    def test_view_with_count(self):
+        self.is_callable(data={'count': 1})
+
+    def test_view_with_category(self):
+        category = factories.CategoryFactory()
+        self.is_callable(data={'category': category.slug})
 
 
 class NewsListViewTestCase(ViewTestMixin, TestCase):
@@ -18,6 +56,24 @@ class NewsListViewTestCase(ViewTestMixin, TestCase):
 
     def test_view(self):
         self.should_be_callable_when_anonymous()
+
+
+class TaggedNewsListViewTestCase(ViewTestMixin, TestCase):
+    """Tests for the ``NewsListView`` view."""
+
+    def setUp(self):
+        entry = factories.NewsEntryFactory()
+        self.tagged_item = TaggedItemFactory(object=entry)
+
+    def get_view_name(self):
+        return 'news_archive_tagged'
+
+    def get_view_kwargs(self):
+        return {'tag': self.tagged_item.tag.slug}
+
+    def test_view(self):
+        self.should_be_callable_when_anonymous()
+        self.is_callable(kwargs={'tag': 'foobar'})
 
 
 class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
@@ -71,3 +127,23 @@ class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
             'month': self.entry.pub_date.month,
             'day': self.entry.pub_date.day,
         }
+
+
+class NewsDetailPreviewViewTestCase(ViewTestMixin, TestCase):
+    """Test for the `NewsDetailPreviewView` view class."""
+
+    def get_view_name(self):
+        return 'news_preview'
+
+    def get_view_kwargs(self):
+        return {
+            'slug': self.en_trans.slug,
+        }
+
+    def setUp(self):
+        self.entry = factories.NewsEntryFactory(
+            pub_date=now() - timedelta(days=1))
+        self.en_trans = self.entry.translations.get(language_code='en')
+
+    def test_view(self):
+        self.should_be_callable_when_anonymous()
