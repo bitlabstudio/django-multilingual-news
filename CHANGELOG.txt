@@ -1,6 +1,10 @@
 === ongoing ===
 
 
+=== 2.0.1 ===
+
+- Making entry preview require admin or staff login.
+
 === 2.0 ===
 
 Backwards incompatible:
