@@ -2,6 +2,7 @@
 from django.test import TestCase
 from django.utils.timezone import timedelta, now
 
+from django_libs.tests.factories import UserFactory
 from django_libs.tests.mixins import (
     ViewRequestFactoryTestMixin,
     ViewTestMixin,
@@ -145,5 +146,10 @@ class NewsDetailPreviewViewTestCase(ViewTestMixin, TestCase):
             pub_date=now() - timedelta(days=1))
         self.en_trans = self.entry.translations.get(language_code='en')
 
+        self.user = UserFactory()
+        self.admin = UserFactory(is_superuser=True)
+
     def test_view(self):
-        self.should_be_callable_when_anonymous()
+        self.is_not_callable()
+        self.is_not_callable(user=self.user)
+        self.is_callable(user=self.admin)

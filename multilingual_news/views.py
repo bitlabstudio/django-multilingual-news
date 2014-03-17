@@ -1,5 +1,8 @@
 """Views for the ``multilingual_news`` app."""
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import Http404
+from django.utils.decorators import method_decorator
 from django.utils.translation import get_language
 from django.views.generic import DateDetailView, DetailView, ListView
 
@@ -96,6 +99,13 @@ class NewsDetailView(DetailViewMixin, DetailView):
 
 class NewsDetailPreviewView(NewsDetailView):
     """View to display one news entry that is not public yet."""
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not (request.user.is_staff or request.user.is_superuser):
+            raise Http404
+        return super(NewsDetailPreviewView, self).dispatch(
+            request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         ctx = super(NewsDetailPreviewView, self).get_context_data(**kwargs)
