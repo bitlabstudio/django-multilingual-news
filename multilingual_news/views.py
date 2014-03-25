@@ -61,6 +61,8 @@ class NewsListView(ListView):
     template_name = 'multilingual_news/newsentry_list.html'
 
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            return NewsEntry.objects.all()
         return NewsEntry.objects.published()
 
 
