@@ -1,5 +1,8 @@
 === ongoing ===
 
+
+- fixed migration dependencies
+
 === 2.0.2 ===
 
 - displaying all entries, even if unpublished, when a user is logged in as

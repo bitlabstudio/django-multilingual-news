@@ -9,6 +9,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     no_dry_run = True
+    depends_on = (('people', '0016_rename_plugin_table'),)
 
     def forwards(self, orm):
 
