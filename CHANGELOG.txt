@@ -1,6 +1,8 @@
 === ongoing ===
 
 
+=== 2.0.3 ===
+
 - fixed migration dependencies
 
 === 2.0.2 ===
