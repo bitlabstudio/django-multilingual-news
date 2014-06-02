@@ -2,19 +2,19 @@
 {% load cms_tags i18n %}
 
 {% block main %}
-<h1>{% trans "News" %}</h1>
-{% render_model_add object_list.0 %}
-{% for news_entry in object_list %}
-    {% include "multilingual_news/partials/entry.html" %}
-{% endfor %}
+    <h1>{% trans "News" %}</h1>
+    {% render_model_add object_list.0 %}
+    {% for news_entry in object_list %}
+        {% include "multilingual_news/partials/entry.html" %}
+    {% endfor %}
 
-{% if is_paginated %}
-    {% if page_obj.has_previous %}
-        <a href="?page={{ object_list.previous_page_number }}">{% trans "previous" %}</a>
+    {% if is_paginated %}
+        {% if page_obj.has_previous %}
+            <a href="?page={{ object_list.previous_page_number }}">{% trans "previous" %}</a>
+        {% endif %}
+        {% blocktrans with number=page_obj.number num_pages=page_obj.paginator.num_pages %}Page {{ number }} of {{ num_pages }}{% endblocktrans %}
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">{% trans "next" %}</a>
+        {% endif %}
     {% endif %}
-    {% blocktrans with number=page_obj.number num_pages=page_obj.paginator.num_pages %}Page {{ number }} of {{ num_pages }}{% endblocktrans %}
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">{% trans "next" %}</a>
-    {% endif %}
-{% endif %}
 {% endblock %}
