@@ -91,6 +91,39 @@ class NewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.is_callable(user=self.admin)
 
 
+class PublishNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
+    """Tests for the ``PublishNewsEntryView`` view class."""
+    view_class = views.PublishNewsEntryView
+
+    def get_view_kwargs(self):
+        return {'pk': self.entry.pk}
+
+    def setUp(self):
+        self.user = UserFactory()
+        self.admin = UserFactory(is_superuser=True)
+        self.entry = factories.NewsEntryFactory()
+
+    def test_view(self):
+        self.should_redirect_to_login_when_anonymous()
+
+        # getting the view should not be possible
+        resp = self.get(user=self.user)
+        self.assertEqual(resp.status_code, 405)
+        resp = self.get(user=self.admin)
+        self.assertEqual(resp.status_code, 405)
+
+        self.is_postable(user=self.admin, data={'action': 'publish'},
+                         to=reverse('news_detail', kwargs={
+                             'slug': self.entry.slug}))
+        self.assertTrue(
+            models.NewsEntry.objects.get(pk=self.entry.pk).is_published)
+        self.is_postable(user=self.admin, data={'action': 'unpublish'},
+                         to=reverse('news_detail', kwargs={
+                             'slug': self.entry.slug}))
+        self.assertFalse(
+            models.NewsEntry.objects.get(pk=self.entry.pk).is_published)
+
+
 class TaggedNewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     """Tests for the ``TaggedNewsListView`` view."""
     view_class = views.TaggedNewsListView

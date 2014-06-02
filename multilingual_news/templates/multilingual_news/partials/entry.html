@@ -1,7 +1,7 @@
 {% load multilingual_news_tags cms_tags thumbnail i18n %}
 
 <h2><a href="{{ news_entry.get_absolute_url }}">{% render_model news_entry "title" %}</a></h2>
-{% if not news_entry.is_published %}
+{% if not news_entry.is_published and not preview%}
     <p class="badge">UNPUBLISHED</p>
 {% endif %}
 <p class="text-muted newsentryDetails">
@@ -28,7 +28,14 @@
 </p>
 {% if news_entry.image %}<img src="{% thumbnail news_entry.image 750x562 crop %}" alt="" />{% endif %}
 {% render_placeholder news_entry.content  %}
-{% if request.user.is_superuser or request.user.is_staff %}
-    <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal" class="btn btn-danger" title="{% trans "Delete this entry" %}"><span class="glyphicon glyphicon-minus"></span> {% trans "Delete entry" %}</a>
-    <p>TODO: Publish/Unpublish button</p>
+{% if not preview %}
+    {% if request.user.is_superuser or request.user.is_staff %}
+        <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal" class="btn btn-danger" title="{% trans "Delete this entry" %}"><span class="glyphicon glyphicon-minus"></span> {% trans "Delete entry" %}</a>
+        <form action="{% url "news_publish" pk=news_entry.pk %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="{% if news_entry.is_published %}unpublish{% else %}publish{% endif %}" />
+            <button type="submit" {% if news_entry.is_published %}style="display:none;"{% endif %} class="btn btn-info" title="{% trans "Publish this entry" %}"><span class="glyphicon glyphicon-ok"></span> {% trans "Publish entry" %}</button>
+            <button type="submit" {% if not news_entry.is_published %}style="display:none;"{% endif %}  class="btn btn-info" title="{% trans "Unpublish this entry" %}"><span class="glyphicon glyphicon-remove"></span> {% trans "Unpublish entry" %}</button>
+        </form>
+    {% endif %}
 {% endif %}

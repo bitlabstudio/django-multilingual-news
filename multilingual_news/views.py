@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import get_language
 from django.views.generic import (
@@ -10,6 +11,7 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
+    View,
 )
 
 from .app_settings import PAGINATION_AMOUNT
@@ -105,6 +107,33 @@ class NewsListView(ListView):
         if self.request.user.is_superuser:
             return NewsEntry.objects.all()
         return NewsEntry.objects.published()
+
+
+class PublishNewsEntryView(View):
+    """View to publish a NewsEntry."""
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if request.method.lower() == 'post':
+            if not self.request.user.is_superuser:
+                raise Http404
+            try:
+                self.object = NewsEntry.objects.get(pk=kwargs.get('pk'))
+            except NewsEntry.DoesNotExist:
+                raise Http404
+        return super(PublishNewsEntryView, self).dispatch(
+            request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        action = self.request.POST.get('action', None)
+        if action == 'publish':
+            self.object.is_published = True
+            self.object.save()
+        if action == 'unpublish':
+            self.object.is_published = False
+            self.object.save()
+        return redirect(reverse('news_detail', kwargs={
+            'slug': self.object.slug}))
 
 
 class TaggedNewsListView(ListView):
