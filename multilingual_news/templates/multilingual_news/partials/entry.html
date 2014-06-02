@@ -1,10 +1,30 @@
 {% load multilingual_news_tags cms_tags thumbnail i18n %}
 
-{% if news_entry.image %}<img src="{% thumbnail news_entry.image 100x100 crop %}" alt="" />{% endif %}
-{% if news_entry.pub_date %}<p>{% render_model news_entry "pub_date" %}</p>{% endif %}
-{% if news_entry.category %}<p>{% trans "Category" %}: <a href="{{ news_entry.category.get_absolute_url }}">{% render_model news_entry "category" %}</a></p>{% endif %}
 <h2><a href="{{ news_entry.get_absolute_url }}">{% render_model news_entry "title" %}</a></h2>
 {% if not news_entry.is_published %}
-    <p>UNPUBLISHED</p>
+    <p class="badge">UNPUBLISHED</p>
 {% endif %}
+<p class="text-muted newsentryDetails">
+    {% if news_entry.author %}<span>{% trans "By" %} {{ news_entry.author }}</span>{% endif %}
+    <span><span class="glyphicon glyphicon-calendar"></span> {% if news_entry.pub_date %}{{ news_entry.pub_date.date }}{% else %}Mon D, YYYY{% endif %}</span>
+    {% if news_entry.categories.all %}
+        <span>
+            <span class="glyphicon glyphicon-cloud"></span>
+                {% for category in news_entry.categories.all %}
+                    <a href="{{ category.get_absolute_url }}">{{ category.title }}</a>{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            </span>
+        </span>
+    {% endif %}
+    {% if news_entry.tags.all %}
+        <span>
+            <span class="glyphicon glyphicon-tag"></span>
+                {% for tagged_item in news_entry.tags.all %}
+                    <a href="{% url "news_archive_tagged" tag=tagged_item.tag.slug %}">{{ tagged_item.tag.name }}</a>{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            </span>
+        </span>
+    {% endif %}
+</p>
+{% if news_entry.image %}<img src="{% thumbnail news_entry.image 750x562 crop %}" alt="" />{% endif %}
 {% render_placeholder news_entry.content  %}
