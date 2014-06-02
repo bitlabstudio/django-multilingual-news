@@ -1,6 +1,8 @@
 === ongoing ===
 
 
+=== 2.1 ===
+
 - added PublishEntryView to publish or unpublish entries
 - added NewsEntryDeleteView to delete entries
 - added publish/unpublish and delete buttons to entry template
