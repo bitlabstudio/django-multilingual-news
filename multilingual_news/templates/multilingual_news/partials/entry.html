@@ -28,3 +28,7 @@
 </p>
 {% if news_entry.image %}<img src="{% thumbnail news_entry.image 750x562 crop %}" alt="" />{% endif %}
 {% render_placeholder news_entry.content  %}
+{% if request.user.is_superuser or request.user.is_staff %}
+    <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal" class="btn btn-danger" title="{% trans "Delete this entry" %}"><span class="glyphicon glyphicon-minus"></span> {% trans "Delete entry" %}</a>
+    <p>TODO: Publish/Unpublish button</p>
+{% endif %}

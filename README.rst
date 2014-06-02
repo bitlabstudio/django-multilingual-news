@@ -48,6 +48,50 @@ Run the South migrations::
     ./manage.py migrate multilingual_news
 
 
+Twitter Bootstrap 3
+-------------------
+
+List of Bootstrap compatible features:
+
+* A delete confirmation modal for deleting news entries.
+
+For support of the Twitter Bootstrap 3 functionality, you need to add the library to your template.
+
+.. code-block:: html
+
+
+    <script type="text/javascript" src="{% static "multilingual_news/js/multilingual_news.bootstrap.js" %}"></script>
+
+
+Delete confirmation modal
++++++++++++++++++++++++++
+
+Add the following markup to your template.
+
+.. code-block:: html
+
+    {% load static %}
+
+    {# add this before multilingual_news.bootstrap.js #}
+    <script type="text/javascript" src="{% static "django_libs/js/modals.js" %}"></script>
+
+    <div id="ajax-modal" class="modal fade" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+
+To trigger the modal, create a link that looks like this.
+
+.. code-block:: html
+
+    <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal">Delete</a>
+
+
 Usage
 -----
 

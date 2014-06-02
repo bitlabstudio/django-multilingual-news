@@ -41,7 +41,7 @@ urlpatterns = patterns(
         name='news_archive_tagged'),
     url(r'^delete-entry/(?P<pk>\d+)/',
         views.DeleteNewsEntryView.as_view(),
-        name='news_delete_entry',),
+        name='news_delete',),
     url(r'^$',
         views.NewsListView.as_view(),
         name='news_list'),

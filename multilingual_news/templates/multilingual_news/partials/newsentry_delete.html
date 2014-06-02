@@ -1,0 +1,10 @@
+{% load i18n %}
+<h1>{% trans "Are you sure, you want to delete the entry?" %}</h1>
+<h2>"{{ object.title }}"</h2>
+<form action="{% url "news_delete" pk=object.pk %}" method="post">
+    {% csrf_token %}
+    <p>
+        <input type="submit" class="btn btn-danger" value="{% trans "Delete" %}">
+        <a href="{% url "news_detail" slug=object.slug %}" data-id="entryDeleteCancel" class="btn btn-default">{% trans "Cancel" %}</a>
+    </p>
+</form>
