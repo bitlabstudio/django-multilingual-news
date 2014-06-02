@@ -38,6 +38,9 @@ Add ``multilingual_news`` to your ``INSTALLED_APPS``::
     INSTALLED_APPS = (
         ...,
         'multilingual_news',
+        'people',
+        'hvad',
+        'multilingual_tags',
     )
 
 Run the South migrations::
