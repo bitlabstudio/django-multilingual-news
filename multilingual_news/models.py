@@ -299,6 +299,11 @@ class NewsEntry(TranslatableModel):
         return self.is_published and (
             self.pub_date is None or self.pub_date <= now())
 
+    def save(self, *args, **kwargs):
+        if self.is_published and self.pub_date is None:
+            self.pub_date = now()
+        super(NewsEntry, self).save(*args, **kwargs)
+
 
 class RecentPlugin(CMSPlugin):
     """Plugin model to display recent news."""
