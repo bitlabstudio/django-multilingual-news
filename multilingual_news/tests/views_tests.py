@@ -1,12 +1,10 @@
 """Tests for the views of the ``multilingual_news`` app."""
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.timezone import timedelta, now
 
 from django_libs.tests.factories import UserFactory
-from django_libs.tests.mixins import (
-    ViewRequestFactoryTestMixin,
-    ViewTestMixin,
-)
+from django_libs.tests.mixins import ViewRequestFactoryTestMixin
 from multilingual_tags.tests.factories import TaggedItemFactory
 
 from . import factories
@@ -32,6 +30,36 @@ class CategoryListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.is_callable()
 
 
+class DeleteNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
+    """Tests for the ``DeleteNewsEntryView`` view class."""
+    view_class = views.DeleteNewsEntryView
+
+    def get_view_kwargs(self):
+        return {'pk': self.entry.pk}
+
+    def setUp(self):
+        self.user = UserFactory()
+        self.admin = UserFactory(is_superuser=True)
+        self.entry = factories.NewsEntryFactory()
+        self.entry2 = factories.NewsEntryFactory()
+
+    def test_view(self):
+        self.should_redirect_to_login_when_anonymous()
+        self.is_not_callable(user=self.user)
+        self.is_not_callable(user=self.user, ajax=True)
+        self.is_callable(user=self.admin)
+        self.is_callable(user=self.admin, ajax=True)
+        self.is_postable(user=self.admin, ajax=True)
+        self.assertEqual(models.NewsEntry.objects.count(), 1, msg=(
+            'After posting, there should only be one entry in the db.'))
+
+        self.is_postable(user=self.admin, kwargs={'pk': self.entry2.pk},
+                         to=reverse('news_list'))
+        self.assertEqual(models.NewsEntry.objects.count(), 0, msg=(
+            'After posting again for the other entry, there should be'
+            ' no more entry in the database.'))
+
+
 class GetEntriesAjaxViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     """Tests for the ``GetEntriesAjaxView`` view class."""
     view_class = views.GetEntriesAjaxView
@@ -47,20 +75,25 @@ class GetEntriesAjaxViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.is_callable(data={'category': category.slug})
 
 
-class NewsListViewTestCase(ViewTestMixin, TestCase):
+class NewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     """Tests for the ``NewsListView`` view."""
+    view_class = views.NewsListView
+
     def setUp(self):
         factories.NewsEntryFactory()
+        self.admin = UserFactory(is_superuser=True)
 
     def get_view_name(self):
         return 'news_list'
 
     def test_view(self):
-        self.should_be_callable_when_anonymous()
+        self.is_callable()
+        self.is_callable(user=self.admin)
 
 
-class TaggedNewsListViewTestCase(ViewTestMixin, TestCase):
-    """Tests for the ``NewsListView`` view."""
+class TaggedNewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
+    """Tests for the ``TaggedNewsListView`` view."""
+    view_class = views.TaggedNewsListView
 
     def setUp(self):
         entry = factories.NewsEntryFactory()
@@ -73,12 +106,14 @@ class TaggedNewsListViewTestCase(ViewTestMixin, TestCase):
         return {'tag': self.tagged_item.tag.slug}
 
     def test_view(self):
-        self.should_be_callable_when_anonymous()
+        self.is_callable()
         self.is_callable(kwargs={'tag': 'foobar'})
 
 
-class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
+class NewsDateDetailViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     """Tests for the ``NewsDateDetailView`` view."""
+    view_class = views.NewsDateDetailView
+
     def setUp(self):
         self.entry = factories.NewsEntryFactory(
             pub_date=now() - timedelta(days=1))
@@ -97,41 +132,40 @@ class NewsDateDetailViewTestCase(ViewTestMixin, TestCase):
     def get_view_kwargs(self):
         return {
             'slug': self.en_trans.slug,
-            'year': self.entry.pub_date.year,
-            'month': self.entry.pub_date.month,
-            'day': self.entry.pub_date.day,
+            'year': unicode(self.entry.pub_date.year),
+            'month': unicode(self.entry.pub_date.month),
+            'day': unicode(self.entry.pub_date.day),
         }
 
     def test_view(self):
-        self.should_be_callable_when_anonymous()
+        self.is_callable()
         data = {
             'slug': self.en_trans.slug,
-            'year': 9999,
-            'month': self.entry.pub_date.month,
-            'day': self.entry.pub_date.day,
+            'year': u'9999',
+            'month': unicode(self.entry.pub_date.month),
+            'day': unicode(self.entry.pub_date.day),
         }
-        self.is_not_callable(kwargs=data, message=(
-            "If date doesn't match an object, raise a 404"))
+        self.is_not_callable(kwargs=data)
 
         data = {
             'slug': 'foo',
-            'year': self.entry.pub_date.year,
-            'month': self.entry.pub_date.month,
-            'day': self.entry.pub_date.day,
+            'year': unicode(self.entry.pub_date.year),
+            'month': unicode(self.entry.pub_date.month),
+            'day': unicode(self.entry.pub_date.day),
         }
-        self.is_not_callable(kwargs=data, message=(
-            "If slug doesn't match an object, raise a 404"))
+        self.is_not_callable(kwargs=data)
 
         data = {
             'slug': self.de_trans.slug,
-            'year': self.entry.pub_date.year,
-            'month': self.entry.pub_date.month,
-            'day': self.entry.pub_date.day,
+            'year': unicode(self.entry.pub_date.year),
+            'month': unicode(self.entry.pub_date.month),
+            'day': unicode(self.entry.pub_date.day),
         }
 
 
-class NewsDetailPreviewViewTestCase(ViewTestMixin, TestCase):
+class NewsDetailPreviewViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     """Test for the `NewsDetailPreviewView` view class."""
+    view_class = views.NewsDetailPreviewView
 
     def get_view_name(self):
         return 'news_preview'
@@ -150,6 +184,6 @@ class NewsDetailPreviewViewTestCase(ViewTestMixin, TestCase):
         self.admin = UserFactory(is_superuser=True)
 
     def test_view(self):
-        self.is_not_callable()
+        self.should_redirect_to_login_when_anonymous()
         self.is_not_callable(user=self.user)
         self.is_callable(user=self.admin)

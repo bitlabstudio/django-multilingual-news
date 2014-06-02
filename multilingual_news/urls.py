@@ -27,9 +27,6 @@ urlpatterns = patterns(
     url(r'^category/(?P<category>[^/]*)/',
         views.CategoryListView.as_view(),
         name='news_archive_category',),
-    url(r'^get-entries/',
-        views.GetEntriesAjaxView.as_view(),
-        name='news_get_entries',),
     url(r'^(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/(?P<slug>[\w-]+)/$',
         views.NewsDateDetailView.as_view(),
         name='news_detail'),
@@ -42,7 +39,15 @@ urlpatterns = patterns(
     url(r'^tag/(?P<tag>[\w-]+)$',
         views.TaggedNewsListView.as_view(),
         name='news_archive_tagged'),
+    url(r'^delete-entry/(?P<pk>\d+)/',
+        views.DeleteNewsEntryView.as_view(),
+        name='news_delete_entry',),
     url(r'^$',
         views.NewsListView.as_view(),
         name='news_list'),
+
+    # AJAX views
+    url(r'^get-entries/',
+        views.GetEntriesAjaxView.as_view(),
+        name='news_get_entries',),
 )

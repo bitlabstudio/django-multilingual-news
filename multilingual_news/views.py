@@ -1,10 +1,16 @@
 """Views for the ``multilingual_news`` app."""
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import get_language
-from django.views.generic import DateDetailView, DetailView, ListView
+from django.views.generic import (
+    DateDetailView,
+    DeleteView,
+    DetailView,
+    ListView,
+)
 
 from .app_settings import PAGINATION_AMOUNT
 from .models import Category, NewsEntry
@@ -26,6 +32,41 @@ class CategoryListView(ListView):
 
     def get_queryset(self):
         return self.category.get_entries()
+
+
+class DeleteNewsEntryView(DeleteView):
+    """View where staff can delete entries."""
+    ajax_template_name = 'multilingual_news/partials/newsentry_delete.html'
+    template_name = 'multilingual_news/newsentry_delete.html'
+    model = NewsEntry
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not (request.user.is_superuser or request.user.is_staff):
+            raise Http404
+        self.object = self.get_object()
+        return super(DeleteNewsEntryView, self).dispatch(
+            request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object.delete()
+        if request.is_ajax():
+            context = {
+                'deleted': True,
+                'redirect_url': self.get_success_url(),
+            }
+            return HttpResponse(context)
+        else:
+            return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('news_list')
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return [self.ajax_template_name]
+        else:
+            return super(DeleteNewsEntryView, self).get_template_names()
 
 
 class GetEntriesAjaxView(ListView):
