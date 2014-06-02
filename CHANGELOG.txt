@@ -1,7 +1,9 @@
 === ongoing ===
 
 
-- added delete view for entries
+- added PublishEntryView to publish or unpublish entries
+- added NewsEntryDeleteView to delete entries
+- added publish/unpublish and delete buttons to entry template
 - added bootstrap modal for delete view
 - added optional bootstrap ressources
 
