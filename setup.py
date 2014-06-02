@@ -37,9 +37,7 @@ setup(
         'django-document-library',
         'django-people',
         'django-multilingual-tags',
-    ],
-    dependency_links=[
-        'https://github.com/divio/django-cms/tarball/develop',
+        'django-cms>=3.0',
     ],
     tests_require=[
         'fabric',
