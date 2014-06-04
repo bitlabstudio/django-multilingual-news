@@ -1,6 +1,8 @@
 === ongoing ===
 
 
+=== 2.1.1 ===
+
 - some useful additions to the default entry template
 
 === 2.1 ===
