@@ -1,6 +1,8 @@
 === ongoing ===
 
 
+- some useful additions to the default entry template
+
 === 2.1 ===
 
 - added PublishEntryView to publish or unpublish entries

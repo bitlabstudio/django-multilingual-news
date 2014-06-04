@@ -1,6 +1,14 @@
 {% load multilingual_news_tags cms_tags thumbnail i18n %}
 
-<h2><a href="{{ news_entry.get_absolute_url }}">{% render_model news_entry "title" %}</a></h2>
+<h2>
+    {% if not preview %}
+        {% if request.user.is_superuser or request.user.is_staff %}
+            {% render_model_icon news_entry %}
+        {% endif %}
+    {% endif %}
+    <a href="{{ news_entry.get_absolute_url }}">{% render_model news_entry "title" %}</a>
+</h2>
+
 {% if not news_entry.is_published and not preview%}
     <p class="badge">UNPUBLISHED</p>
 {% endif %}
@@ -30,6 +38,7 @@
 {% render_placeholder news_entry.content  %}
 {% if not preview %}
     {% if request.user.is_superuser or request.user.is_staff %}
+        <a href="{% url "news_detail" slug=news_entry.slug %}" class="btn btn-success btn-mini"><span class="glyphicon glyphicon-pencil"></span> {% trans "Open entry to edit" %}</a>
         <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal" class="btn btn-danger" title="{% trans "Delete this entry" %}"><span class="glyphicon glyphicon-minus"></span> {% trans "Delete entry" %}</a>
         <form action="{% url "news_publish" pk=news_entry.pk %}" method="post" style="display: inline;">
             {% csrf_token %}
