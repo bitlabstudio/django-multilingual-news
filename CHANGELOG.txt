@@ -1,5 +1,6 @@
 === ongoing ===
 
+- Added category argument to recent news
 
 === 2.1.1 ===
 

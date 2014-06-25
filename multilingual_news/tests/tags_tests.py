@@ -124,8 +124,10 @@ class GetRecentNewsTestCase(TestCase):
     longMessage = True
 
     def setUp(self):
-        factories.NewsEntryFactory()
-        factories.NewsEntryFactory()
+        self.news_entry = factories.NewsEntryFactory()
+        self.category = factories.CategoryFactory()
+        self.news_entry.categories.add(self.category)
+        self.news_entry_2 = factories.NewsEntryFactory()
         factories.NewsEntryFactory()
         factories.NewsEntryFactory()
 
@@ -135,3 +137,13 @@ class GetRecentNewsTestCase(TestCase):
         result = get_recent_news(context)
         self.assertEqual(result.count(), 3, msg=(
             'Should return last three recent news'))
+        result = get_recent_news(context, category='foo')
+        self.assertEqual(result.count(), 3, msg=(
+            'Should return last three recent news, if category is invalid.'))
+        result = get_recent_news(context, category=self.category.slug)
+        self.assertEqual(result.count(), 1, msg=(
+            'Should only return recent news from chosen category'))
+        self.news_entry_2.categories.add(self.category)
+        result = get_recent_news(context, category=self.category.slug)
+        self.assertEqual(result.count(), 2, msg=(
+            'Should only return recent news from chosen category'))

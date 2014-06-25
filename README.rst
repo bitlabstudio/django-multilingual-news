@@ -144,14 +144,19 @@ get_recent_news
 
 To render recent news::
 
+    {% load multilingual_news_tags %}
     {% get_recent_news limit=5 as recent_news %}
     {% include "multilingual_news/recent.html" with object_list=recent_news %}
+
+You might want to filter recent news by a category. Just add the relevant
+category slug::
+
+    {% get_recent_news category='category-slug' as recent_news %}
 
 If you want to render recent news on a news detail page, you might want to
 exclude the current news from the queryset::
 
     {% get_recent_news exclude=object as recent_news %}
-    {% include "multilingual_news/recent.html" with object_list=recent_news %}
 
 
 get_newsentry_meta_description and get_newsentry_meta_title

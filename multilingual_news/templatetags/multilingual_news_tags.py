@@ -4,7 +4,7 @@ import warnings
 from django import template
 from django.template.defaultfilters import safe, truncatewords_html
 
-from ..models import NewsEntry
+from ..models import NewsEntry, Category
 
 
 register = template.Library()
@@ -35,11 +35,18 @@ def get_newsentry_meta_title(newsentry):
 
 
 @register.assignment_tag(takes_context=True)
-def get_recent_news(context, check_language=True, limit=3, exclude=None):
-    qs = NewsEntry.objects.recent(
-        check_language=check_language,
-        limit=limit,
-        exclude=exclude)
+def get_recent_news(context, check_language=True, limit=3, exclude=None,
+                    category=None):
+    filter_kwargs = {
+        'check_language': check_language,
+        'limit': limit,
+        'exclude': exclude,
+    }
+    try:
+        filter_kwargs['category'] = Category.objects.get(slug=category)
+    except Category.DoesNotExist:
+        pass
+    qs = NewsEntry.objects.recent(**filter_kwargs)
     return qs
 
 

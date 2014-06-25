@@ -112,6 +112,9 @@ class PublishNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         resp = self.get(user=self.admin)
         self.assertEqual(resp.status_code, 405)
 
+        self.is_not_callable(post=True, user=self.user)
+        self.is_not_callable(post=True, user=self.admin, kwargs={'pk': 999})
+
         self.is_postable(user=self.admin, data={'action': 'publish'},
                          to=reverse('news_detail', kwargs={
                              'slug': self.entry.slug}))
