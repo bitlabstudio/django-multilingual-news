@@ -104,9 +104,11 @@ class NewsListView(ListView):
     template_name = 'multilingual_news/newsentry_list.html'
 
     def get_queryset(self):
+        hidden_categories = Category.objects.filter(hide_on_list=True)
+        kwargs = {'categories__in': hidden_categories}
         if self.request.user.is_superuser:
-            return NewsEntry.objects.all()
-        return NewsEntry.objects.published()
+            return NewsEntry.objects.filter(**kwargs)
+        return NewsEntry.objects.published(kwargs=kwargs)
 
 
 class PublishNewsEntryView(View):

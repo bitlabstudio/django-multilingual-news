@@ -23,6 +23,7 @@ class Category(TranslatableModel):
     :slug: The slug for this category. The slug will be the same for all
       languages.
     :parent: Allows you to build hierarchies of categories.
+    :hide_on_list: Boolean to show/hide on list view.
 
     """
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -36,6 +37,11 @@ class Category(TranslatableModel):
         'multilingual_news.Category',
         verbose_name=_('Parent'),
         null=True, blank=True,
+    )
+
+    hide_on_list = models.BooleanField(
+        default=False,
+        verbose_name=_('Hide on list view'),
     )
 
     translations = TranslatedFields(

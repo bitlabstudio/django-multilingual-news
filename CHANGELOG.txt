@@ -1,5 +1,7 @@
 === ongoing ===
 
+- Added hide_on_list field to categories
+
 === 2.2 ===
 
 - Added category argument to recent news tag

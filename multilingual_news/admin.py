@@ -18,7 +18,7 @@ from .models import Category, NewsEntry
 
 
 class CategoryAdmin(TranslatableAdmin):
-    list_display = ['get_title', 'all_translations', ]
+    list_display = ['get_title', 'hide_on_list', 'all_translations', ]
 
     def get_title(self, obj):
         return obj.title
