@@ -107,8 +107,8 @@ class NewsListView(ListView):
         hidden_categories = Category.objects.filter(hide_on_list=True)
         kwargs = {'categories__in': hidden_categories}
         if self.request.user.is_superuser:
-            return NewsEntry.objects.filter(**kwargs)
-        return NewsEntry.objects.published(kwargs=kwargs)
+            return NewsEntry.objects.exclude(**kwargs)
+        return NewsEntry.objects.published(exclude_kwargs=kwargs)
 
 
 class PublishNewsEntryView(View):

@@ -88,7 +88,8 @@ class CategoryPlugin(CMSPlugin):
 
 class NewsEntryManager(TranslationManager):
     """Custom manager for the ``NewsEntry`` model."""
-    def published(self, check_language=True, language=None, kwargs=None):
+    def published(self, check_language=True, language=None, kwargs=None,
+                  exclude_kwargs=None):
         """
         Returns all entries, which publication date has been hit or which have
         no date and which language matches the current language.
@@ -104,6 +105,8 @@ class NewsEntryManager(TranslationManager):
         )
         if kwargs is not None:
             qs = qs.filter(**kwargs)
+        if exclude_kwargs is not None:
+            qs = qs.exclude(**exclude_kwargs)
         return qs.distinct().order_by('-pub_date')
 
     def recent(self, check_language=True, language=None, limit=3, exclude=None,

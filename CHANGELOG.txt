@@ -1,5 +1,7 @@
 === ongoing ===
 
+=== 2.3 ===
+
 - Added hide_on_list field to categories
 
 === 2.2 ===
