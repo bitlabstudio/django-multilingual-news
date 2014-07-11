@@ -34,7 +34,15 @@
         </span>
     {% endif %}
 </p>
-{% if news_entry.image %}<img src="{% thumbnail news_entry.image 750x562 crop %}" alt="" />{% endif %}
+{% if detail_view %}
+    {% if news_entry.image %}
+        <img src="{% thumbnail news_entry.image 848x562 crop %}" alt="" />
+    {% endif %}
+{% else %}
+    {% if news_entry.image or news_entry.thumbnail %}
+        <img src="{% if news_entry.thumbnail %}{% thumbnail news_entry.thumbnail 250x250 crop %}{% else %}{% thumbnail news_entry.image 250x250 crop %}{% endif %}" alt="" />
+    {% endif %}
+{% endif %}
 {% render_placeholder news_entry.content  %}
 {% if not preview %}
     {% if request.user.is_superuser or request.user.is_staff %}

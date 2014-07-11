@@ -1,5 +1,6 @@
 === ongoing ===
 
+- Added thumbnail field to entry model
 - Added category function to entry model
 
 === 2.3.1 ===

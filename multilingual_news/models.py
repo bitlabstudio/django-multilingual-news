@@ -142,6 +142,7 @@ class NewsEntry(TranslatableModel):
     :image_height: Can be set to manipulate image height
     :image_source_text: Text for the link to the image source
     :image_source_url: URL for the link to the image source
+    :thumbnail: Optional thumbnail to be used in list views.
     :content: CMS placeholder for ``content``
     :excerpt: CMS placeholder for ``excerpt``
     :meta_title: the title, that goes into the meta tags.
@@ -237,6 +238,12 @@ class NewsEntry(TranslatableModel):
         max_length=1024,
         verbose_name=_('Image source text'),
         blank=True,
+    )
+
+    thumbnail = FilerImageField(
+        verbose_name=_('Thumbnail'),
+        null=True, blank=True,
+        related_name='entries_with_thumbnails',
     )
 
     excerpt = PlaceholderField(
