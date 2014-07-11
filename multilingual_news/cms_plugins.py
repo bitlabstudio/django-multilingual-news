@@ -15,7 +15,6 @@ class CMSRecentPlugin(CMSPluginBase):
 
     def render(self, context, instance, placeholder):
         qs = NewsEntry.objects.recent(
-            context['request'],
             check_language=instance.current_language_only,
             limit=instance.limit,
         )

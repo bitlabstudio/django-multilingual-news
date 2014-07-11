@@ -29,10 +29,10 @@ setup(
     include_package_data=True,
     install_requires=[
         'Django>=1.6.2',
-        'django-hvad>=0.3',
+        'django-hvad>=0.4',
         'djangocms-utils>=0.9.5',
         'django-filer>=0.9.4',
-        'Pillow>=2.0.0',
+        'Pillow>=2.4.0',
         'South',
         'django-document-library',
         'django-people',
