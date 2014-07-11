@@ -33,6 +33,11 @@ class NewsEntryTestCase(TestCase):
             result, reverse('news_preview', kwargs={'slug': slug}), msg=(
                 'Should return the preview url.'))
 
+    def test_category(self):
+        instance = factories.NewsEntryFactory()
+        self.assertIsNone(instance.category, msg=(
+            'Should return None if entry has no category.'))
+
 
 class NewsEntryManagerTestCase(TestCase):
     """Tests for the ``NewsEntryManager`` model manager."""

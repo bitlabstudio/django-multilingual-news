@@ -260,6 +260,13 @@ class NewsEntry(TranslatableModel):
     def __unicode__(self):
         return self.safe_translation_getter('title', 'Untranslated entry')
 
+    @property
+    def category(self):
+        try:
+            return self.categories.all()[0]
+        except IndexError:
+            return None
+
     def get_absolute_url(self):
         if not self.is_published:
             return self.get_preview_url()
