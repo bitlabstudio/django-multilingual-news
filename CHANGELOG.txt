@@ -1,5 +1,9 @@
 === ongoing ===
 
+=== 2.4.1 ===
+
+- Improved admin
+
 === 2.4 ===
 
 - Added thumbnail field to entry model
