@@ -32,7 +32,11 @@ class NewsEntryAdmin(TranslatableAdmin,
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
         'get_title', 'pub_date', 'author', 'get_is_published',
-        'all_translations']
+        'get_categories', 'all_translations']
+
+    def __init__(self, *args, **kwargs):
+        super(NewsEntryAdmin, self).__init__(*args, **kwargs)
+        self.prepopulated_fields = {'slug': ('title', )}
 
     def get_is_published(self, obj):
         return obj.is_published
@@ -41,6 +45,10 @@ class NewsEntryAdmin(TranslatableAdmin,
     def get_title(self, obj):
         return obj.title
     get_title.short_description = _('Title')
+
+    def get_categories(self, obj):
+        return ', '.join(str(c.title) for c in obj.categories.all())
+    get_title.short_description = _('Categories')
 
 
 admin.site.register(Category, CategoryAdmin)
