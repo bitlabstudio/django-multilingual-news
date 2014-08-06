@@ -41,11 +41,12 @@ Add ``multilingual_news`` to your ``INSTALLED_APPS``::
         'people',
         'hvad',
         'multilingual_tags',
+        'document_library',
     )
 
 Run the South migrations::
 
-    ./manage.py migrate multilingual_news
+    ./manage.py migrate
 
 
 Twitter Bootstrap 3

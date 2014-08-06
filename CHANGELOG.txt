@@ -1,5 +1,7 @@
 === ongoing ===
 
+- Improvemments for list view template and detail view template.
+
 === 2.4.1 ===
 
 - Improved admin

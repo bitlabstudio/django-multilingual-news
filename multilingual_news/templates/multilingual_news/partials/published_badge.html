@@ -1,0 +1,4 @@
+{% load i18n %}
+{% if not news_entry.is_published and not preview %}
+    <p class="badge font-sans-serif"><small>{% trans "Unpublished" %}</small></p>
+{% endif %}

@@ -1,0 +1,8 @@
+{% load cms_tags %}
+{% render_placeholder news_entry.excerpt as excerpt %}
+{% render_placeholder news_entry.content as text %}
+{% if excerpt %}
+    {{ excerpt }}
+{% else %}
+    {{ text|truncatewords_html:words }}
+{% endif %}

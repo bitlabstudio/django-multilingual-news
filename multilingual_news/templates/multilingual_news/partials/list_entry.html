@@ -1,0 +1,6 @@
+{% load cms_tags i18n %}
+<h2>
+    <a href="{{ news_entry.get_absolute_url }}">{{ news_entry.title }}</a>
+</h2>
+{% include "multilingual_news/partials/published_badge.html" %}
+{% include "multilingual_news/partials/excerpt_or_content.html" with words=30 %}

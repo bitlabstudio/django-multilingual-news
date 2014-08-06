@@ -1,20 +1,19 @@
-{% load multilingual_news_tags cms_tags thumbnail i18n %}
+{% load cms_tags i18n libs_tags multilingual_news_tags thumbnail %}
 
 <h2>
-    {% if not preview %}
+    {% if not preview and request.toolbar.edit_mode %}
         {% if request.user.is_superuser or request.user.is_staff %}
-            {% render_model_icon news_entry %}
+            <a href="#">{% render_model news_entry "title" %}</a> {% render_model_icon news_entry %}
         {% endif %}
+    {% else %}
+        <a href="{{ news_entry.get_absolute_url }}">{{ news_entry.title }}</a>
     {% endif %}
-    <a href="{{ news_entry.get_absolute_url }}">{% render_model news_entry "title" %}</a>
 </h2>
 
-{% if not news_entry.is_published and not preview%}
-    <p class="badge">UNPUBLISHED</p>
-{% endif %}
-<p class="text-muted newsentryDetails">
+{% include "multilingual_news/partials/published_badge.html" %}
+<p class="text-muted">
     {% if news_entry.author %}<span>{% trans "By" %} {{ news_entry.author }}</span>{% endif %}
-    <span><span class="glyphicon glyphicon-calendar"></span> {% if news_entry.pub_date %}{{ news_entry.pub_date.date }}{% else %}Mon D, YYYY{% endif %}</span>
+    {% if news_entry.pub_date %}{{ news_entry.pub_date.date }}{% else %}Mon D, YYYY{% endif %}</span>
     {% if news_entry.categories.all %}
         <span>
             <span class="glyphicon glyphicon-cloud"></span>
@@ -43,16 +42,25 @@
         <img src="{% if news_entry.thumbnail %}{% thumbnail news_entry.thumbnail 250x250 crop %}{% else %}{% thumbnail news_entry.image 250x250 crop %}{% endif %}" alt="" />
     {% endif %}
 {% endif %}
-{% render_placeholder news_entry.content  %}
-{% if not preview %}
+
+{% if not preview and request.toolbar.edit_mode %}
+    {% render_placeholder news_entry.excerpt as excerpt %}
+    {{ excerpt }}
+{% endif %}
+
+{% render_placeholder news_entry.content as text %}
+{{ text }}
+
+<p><a href="{% url "news_list" %}">{% trans "Back to article list" %}</a></p>
+
+{% if not preview and request.toolbar.edit_mode %}
     {% if request.user.is_superuser or request.user.is_staff %}
-        <a href="{% url "news_detail" slug=news_entry.slug %}" class="btn btn-success btn-mini"><span class="glyphicon glyphicon-pencil"></span> {% trans "Open entry to edit" %}</a>
-        <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal" class="btn btn-danger" title="{% trans "Delete this entry" %}"><span class="glyphicon glyphicon-minus"></span> {% trans "Delete entry" %}</a>
         <form action="{% url "news_publish" pk=news_entry.pk %}" method="post" style="display: inline;">
             {% csrf_token %}
             <input type="hidden" name="action" value="{% if news_entry.is_published %}unpublish{% else %}publish{% endif %}" />
-            <button type="submit" {% if news_entry.is_published %}style="display:none;"{% endif %} class="btn btn-info" title="{% trans "Publish this entry" %}"><span class="glyphicon glyphicon-ok"></span> {% trans "Publish entry" %}</button>
-            <button type="submit" {% if not news_entry.is_published %}style="display:none;"{% endif %}  class="btn btn-info" title="{% trans "Unpublish this entry" %}"><span class="glyphicon glyphicon-remove"></span> {% trans "Unpublish entry" %}</button>
+            <button type="submit" class="btn btn-warning btn-xs font-sans-serif">{% if news_entry.is_published %}{% trans "Unpublish entry" %}{% else %}{% trans "Publish entry" %}{% endif %}</button>
         </form>
+        <a href="{{ news_entry.get_preview_url }}" class="btn btn-info btn-xs font-sans-serif">{% trans "Preview entry" %}</a>
+        <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal" class="btn btn-danger btn-xs font-sans-serif">{% trans "Delete entry" %}</a>
     {% endif %}
 {% endif %}

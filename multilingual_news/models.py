@@ -275,8 +275,6 @@ class NewsEntry(TranslatableModel):
             return None
 
     def get_absolute_url(self):
-        if not self.is_published:
-            return self.get_preview_url()
         if self.pub_date:
             return reverse('news_detail', kwargs={
                 'year': self.pub_date.year, 'month': self.pub_date.month,

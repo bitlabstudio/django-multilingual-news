@@ -2,10 +2,13 @@
 {% load cms_tags i18n %}
 
 {% block main %}
-    <h1>{% trans "News" %}</h1>
-    {% render_model_add object_list.0 %}
+    <h1>{% trans "Blog" %}</h1>
+    {% if not preview and request.toolbar.edit_mode %}
+        <a href="{% url "admin:multilingual_news_newsentry_add" %}" class="btn btn-primary btn-xs">{% trans "Add entry" %}</a>
+    {% endif %}
+
     {% for news_entry in object_list %}
-        {% include "multilingual_news/partials/entry.html" %}
+        {% include "multilingual_news/partials/list_entry.html" %}
     {% endfor %}
 
     {% if is_paginated %}
