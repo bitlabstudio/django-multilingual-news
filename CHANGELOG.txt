@@ -1,5 +1,7 @@
 === ongoing ===
 
+=== 2.5.1 ===
+
 - Added german translation
 
 === 2.5 ===
