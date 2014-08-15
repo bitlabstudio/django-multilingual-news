@@ -51,6 +51,11 @@ class Category(TranslatableModel):
         )
     )
 
+    class Meta:
+        ordering = ('slug', )
+        verbose_name = _('Category')
+        verbose_name_plural = _('Categories')
+
     def __unicode__(self):
         return self.safe_translation_getter('title', self.slug)
 
@@ -263,6 +268,8 @@ class NewsEntry(TranslatableModel):
 
     class Meta:
         ordering = ('-pub_date', )
+        verbose_name = _('News Entry')
+        verbose_name_plural = _('News Entries')
 
     def __unicode__(self):
         return self.safe_translation_getter('title', 'Untranslated entry')

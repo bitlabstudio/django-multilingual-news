@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-15 09:25-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: multilingual_news/admin.py:25 multilingual_news/admin.py:47
+#: multilingual_news/models.py:50 multilingual_news/models.py:170
+msgid "Title"
+msgstr "Titel"
+
+#: multilingual_news/admin.py:43 multilingual_news/models.py:179
+msgid "Is published"
+msgstr "Ist veröffentlicht"
+
+#: multilingual_news/admin.py:51 multilingual_news/models.py:57
+#: multilingual_news/models.py:204
+msgid "Categories"
+msgstr "Kategorien"
+
+#: multilingual_news/cms_app.py:9
+msgid "Multilingual News Apphook"
+msgstr "Multilinguale News Apphook"
+
+#: multilingual_news/cms_plugins.py:13
+msgid "Recent News"
+msgstr "Aktuelle News"
+
+#: multilingual_news/feeds.py:42 multilingual_news/feeds.py:54
+msgid "{0} blog entries"
+msgstr "{0} Blog-Einträge"
+
+#: multilingual_news/feeds.py:43 multilingual_news/feeds.py:55
+msgid "{0} blog entries in {1}"
+msgstr "{0} Blog-Einträge in {1}"
+
+#: multilingual_news/feeds.py:86 multilingual_news/feeds.py:100
+#: multilingual_news/feeds.py:125 multilingual_news/feeds.py:138
+msgid "{0} by {1}"
+msgstr "{0} von {1}"
+
+#: multilingual_news/models.py:33 multilingual_news/models.py:175
+msgid "Slug"
+msgstr "Slug"
+
+#: multilingual_news/models.py:38
+msgid "Parent"
+msgstr "Übergeordnete Kategorie"
+
+#: multilingual_news/models.py:44
+msgid "Hide on list view"
+msgstr "In Listenansicht verstecken"
+
+#: multilingual_news/models.py:56 multilingual_news/models.py:84
+msgid "Category"
+msgstr "Kategorie"
+
+#: multilingual_news/models.py:89
+msgid "Template Argument"
+msgstr ""
+
+#: multilingual_news/models.py:163
+msgid "Left"
+msgstr "Links"
+
+#: multilingual_news/models.py:164
+msgid "Right"
+msgstr "Rechts"
+
+#: multilingual_news/models.py:183
+msgid "Meta title"
+msgstr "Meta-Titel"
+
+#: multilingual_news/models.py:184
+msgid "Best to keep this below 70 characters"
+msgstr "Im Idealfall nicht mehr als 70 Zeichen"
+
+#: multilingual_news/models.py:189
+msgid "Meta description"
+msgstr "Meta-Beschreibung"
+
+#: multilingual_news/models.py:190
+msgid "Best to keep this below 160 characters"
+msgstr "Im Idealfall nicht mehr als 160 Zeichen"
+
+#: multilingual_news/models.py:198
+msgid "Author"
+msgstr "Autor"
+
+#: multilingual_news/models.py:210
+msgid "Publication date"
+msgstr "Datum der Veröffentlichung"
+
+#: multilingual_news/models.py:215
+msgid "Image"
+msgstr "Bild"
+
+#: multilingual_news/models.py:221
+msgid "Image float"
+msgstr "Bildfluß"
+
+#: multilingual_news/models.py:227
+msgid "Image width"
+msgstr "Bildgröße"
+
+#: multilingual_news/models.py:232
+msgid "Image height"
+msgstr "Bildhöhe"
+
+#: multilingual_news/models.py:238
+msgid "Image source URL"
+msgstr "Bildquellen-URL"
+
+#: multilingual_news/models.py:244
+msgid "Image source text"
+msgstr "Bildquellen-Text"
+
+#: multilingual_news/models.py:249
+msgid "Thumbnail"
+msgstr "Miniaturbild"
+
+#: multilingual_news/models.py:271
+msgid "News Entry"
+msgstr "Artikel"
+
+#: multilingual_news/models.py:272
+msgid "News Entries"
+msgstr "Artikel"
+
+#: multilingual_news/models.py:343
+msgid "Maximum news amount"
+msgstr ""
+
+#: multilingual_news/models.py:346
+msgid "Only show entries for the selected language"
+msgstr "Nur Artikel in der aktuellen Sprache anzeigen"
+
+#: multilingual_news/templates/multilingual_news/newsentry_list.html:5
+msgid "Blog"
+msgstr "Blog"
+
+#: multilingual_news/templates/multilingual_news/newsentry_list.html:7
+msgid "Add entry"
+msgstr "Artikel hinzufügen"
+
+#: multilingual_news/templates/multilingual_news/newsentry_list.html:16
+msgid "previous"
+msgstr "zurück"
+
+#: multilingual_news/templates/multilingual_news/newsentry_list.html:18
+#, python-format
+msgid "Page %(number)s of %(num_pages)s"
+msgstr "Seite %(number)s von %(num_pages)s"
+
+#: multilingual_news/templates/multilingual_news/newsentry_list.html:20
+msgid "next"
+msgstr "vor"
+
+#: multilingual_news/templates/multilingual_news/partials/entry.html:15
+msgid "By"
+msgstr "Von"
+
+#: multilingual_news/templates/multilingual_news/partials/entry.html:54
+msgid "Back to article list"
+msgstr "Zurück zur Listenansicht"
+
+#: multilingual_news/templates/multilingual_news/partials/entry.html:61
+msgid "Unpublish entry"
+msgstr "Veröffentlichung zurücknehmen"
+
+#: multilingual_news/templates/multilingual_news/partials/entry.html:61
+msgid "Publish entry"
+msgstr "Artikel veröffentlichen"
+
+#: multilingual_news/templates/multilingual_news/partials/entry.html:63
+msgid "Preview entry"
+msgstr "Artikel vorschauen"
+
+#: multilingual_news/templates/multilingual_news/partials/entry.html:64
+msgid "Delete entry"
+msgstr "Artikel löschen"
+
+#: multilingual_news/templates/multilingual_news/partials/newsentry_delete.html:2
+msgid "Are you sure, you want to delete the entry?"
+msgstr "Sind Sie sicher, dass Sie diesen Artikel löschen möchten"
+
+#: multilingual_news/templates/multilingual_news/partials/newsentry_delete.html:7
+msgid "Delete"
+msgstr "Löschen"
+
+#: multilingual_news/templates/multilingual_news/partials/newsentry_delete.html:8
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: multilingual_news/templates/multilingual_news/partials/published_badge.html:3
+msgid "Unpublished"
+msgstr "Nicht veröffentlicht"

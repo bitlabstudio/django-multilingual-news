@@ -1,5 +1,7 @@
 === ongoing ===
 
+- Added german translation
+
 === 2.5 ===
 
 - Improvemments for list view template and detail view template.
