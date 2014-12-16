@@ -2,6 +2,7 @@
 import re
 
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db import models
 from django.utils.html import escape
@@ -282,7 +283,8 @@ class NewsEntry(TranslatableModel):
             return None
 
     def get_absolute_url(self):
-        if self.pub_date:
+        if self.pub_date and not settings.USE_TZ:
+            # Using timezones can lead to 404
             return reverse('news_detail', kwargs={
                 'year': self.pub_date.year, 'month': self.pub_date.month,
                 'day': self.pub_date.day, 'slug': self.slug})

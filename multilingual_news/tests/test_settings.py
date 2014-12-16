@@ -6,6 +6,7 @@ import logging
 logging.getLogger("factory").setLevel(logging.WARN)
 
 DEBUG = True
+USE_TZ = True
 
 SITE_ID = 1
 SECRET_KEY = 'secret_key_for_django'

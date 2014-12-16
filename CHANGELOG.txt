@@ -1,5 +1,9 @@
 === ongoing ===
 
+=== 2.5.2 ===
+
+- Improved get_absolute_url function to avoid timezone issues.
+
 === 2.5.1 ===
 
 - Added german translation
