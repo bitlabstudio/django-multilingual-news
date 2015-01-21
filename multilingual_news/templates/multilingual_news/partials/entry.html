@@ -44,12 +44,10 @@
 {% endif %}
 
 {% if not preview and request.toolbar.edit_mode %}
-    {% render_placeholder news_entry.excerpt as excerpt %}
-    {{ excerpt }}
+    {% render_placeholder news_entry.excerpt %}
 {% endif %}
 
-{% render_placeholder news_entry.content as text %}
-{{ text }}
+{% render_placeholder news_entry.content %}
 
 <p><a href="{% url "news_list" %}">{% trans "Back to article list" %}</a></p>
 
