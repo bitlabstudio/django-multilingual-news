@@ -1,0 +1,214 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-18 11:43+0430\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\multilingual_news\admin.py:28 .\multilingual_news\admin.py:52
+#: .\multilingual_news\models.py:51 .\multilingual_news\models.py:171
+msgid "Title"
+msgstr "عنوان"
+
+#: .\multilingual_news\admin.py:47 .\multilingual_news\models.py:180
+msgid "Is published"
+msgstr "منتشر شده"
+
+#: .\multilingual_news\admin.py:57 .\multilingual_news\models.py:58
+#: .\multilingual_news\models.py:205
+msgid "Categories"
+msgstr "دسته بندی ها"
+
+#: .\multilingual_news\cms_app.py:9
+msgid "Multilingual News Apphook"
+msgstr ""
+
+#: .\multilingual_news\cms_plugins.py:13
+msgid "Recent News"
+msgstr "جدیدترین اخبار"
+
+#: .\multilingual_news\feeds.py:42 .\multilingual_news\feeds.py:54
+#, python-brace-format
+msgid "{0} blog entries"
+msgstr "{0} نوشته بلاگ"
+
+#: .\multilingual_news\feeds.py:43 .\multilingual_news\feeds.py:55
+#, python-brace-format
+msgid "{0} blog entries in {1}"
+msgstr "{0} نوشته بلاگ در {1}"
+
+#: .\multilingual_news\feeds.py:86 .\multilingual_news\feeds.py:100
+#: .\multilingual_news\feeds.py:125 .\multilingual_news\feeds.py:138
+#, python-brace-format
+msgid "{0} by {1}"
+msgstr "{0} از {1}"
+
+#: .\multilingual_news\models.py:34 .\multilingual_news\models.py:176
+msgid "Slug"
+msgstr "مسیر"
+
+#: .\multilingual_news\models.py:39
+msgid "Parent"
+msgstr "والد"
+
+#: .\multilingual_news\models.py:45
+msgid "Hide on list view"
+msgstr "عدم نمایش در لیست"
+
+#: .\multilingual_news\models.py:57 .\multilingual_news\models.py:85
+msgid "Category"
+msgstr "دسته بندی"
+
+#: .\multilingual_news\models.py:90
+msgid "Template Argument"
+msgstr "آرگومان الگو"
+
+#: .\multilingual_news\models.py:164
+msgid "Left"
+msgstr "چپ"
+
+#: .\multilingual_news\models.py:165
+msgid "Right"
+msgstr "راست"
+
+#: .\multilingual_news\models.py:184
+msgid "Meta title"
+msgstr "عنوان متا"
+
+#: .\multilingual_news\models.py:185
+msgid "Best to keep this below 70 characters"
+msgstr "بهتر است کمتر از 70 کاراکتر باشد"
+
+#: .\multilingual_news\models.py:190
+msgid "Meta description"
+msgstr "توضیح متا"
+
+#: .\multilingual_news\models.py:191
+msgid "Best to keep this below 160 characters"
+msgstr "بهتر است کمتر از 160 کاراکتر باشد"
+
+#: .\multilingual_news\models.py:199
+msgid "Author"
+msgstr "نویسنده"
+
+#: .\multilingual_news\models.py:211
+msgid "Publication date"
+msgstr "تاریخ انتشار"
+
+#: .\multilingual_news\models.py:216
+msgid "Image"
+msgstr "تصویر"
+
+#: .\multilingual_news\models.py:222
+msgid "Image float"
+msgstr "تصویر شناور"
+
+#: .\multilingual_news\models.py:228
+msgid "Image width"
+msgstr "عرض تصویر"
+
+#: .\multilingual_news\models.py:233
+msgid "Image height"
+msgstr "ارتفاع تصویر"
+
+#: .\multilingual_news\models.py:239
+msgid "Image source URL"
+msgstr "آدرس منبع تصویر"
+
+#: .\multilingual_news\models.py:245
+msgid "Image source text"
+msgstr "متن منبع تصویر"
+
+#: .\multilingual_news\models.py:250
+msgid "Thumbnail"
+msgstr "تصویر کوچک"
+
+#: .\multilingual_news\models.py:272
+msgid "News Entry"
+msgstr "خبر"
+
+#: .\multilingual_news\models.py:273
+msgid "News Entries"
+msgstr "اخبار"
+
+#: .\multilingual_news\models.py:345
+msgid "Maximum news amount"
+msgstr "حداکثر تعداد اخبار"
+
+#: .\multilingual_news\models.py:348
+msgid "Only show entries for the selected language"
+msgstr "فقط نمایش اخبار برای زبان انتخاب شده"
+
+#: .\multilingual_news\templates\multilingual_news\newsentry_list.html:5
+msgid "Blog"
+msgstr "بلاگ"
+
+#: .\multilingual_news\templates\multilingual_news\newsentry_list.html:7
+msgid "Add entry"
+msgstr "افزودن"
+
+#: .\multilingual_news\templates\multilingual_news\newsentry_list.html:16
+msgid "previous"
+msgstr "قبلی"
+
+#: .\multilingual_news\templates\multilingual_news\newsentry_list.html:18
+#, python-format
+msgid "Page %(number)s of %(num_pages)s"
+msgstr "صفحه %(number)s از %(num_pages)s"
+
+#: .\multilingual_news\templates\multilingual_news\newsentry_list.html:20
+msgid "next"
+msgstr "بعدی"
+
+#: .\multilingual_news\templates\multilingual_news\partials\entry.html:15
+msgid "By"
+msgstr "با"
+
+#: .\multilingual_news\templates\multilingual_news\partials\entry.html:52
+msgid "Back to article list"
+msgstr "بازگشت به لیست اخبار"
+
+#: .\multilingual_news\templates\multilingual_news\partials\entry.html:59
+msgid "Unpublish entry"
+msgstr "لغو انتشار خبر"
+
+#: .\multilingual_news\templates\multilingual_news\partials\entry.html:59
+msgid "Publish entry"
+msgstr "انتشار خبر"
+
+#: .\multilingual_news\templates\multilingual_news\partials\entry.html:61
+msgid "Preview entry"
+msgstr "پیش نمایش"
+
+#: .\multilingual_news\templates\multilingual_news\partials\entry.html:62
+msgid "Delete entry"
+msgstr "حذف"
+
+#: .\multilingual_news\templates\multilingual_news\partials\newsentry_delete.html:2
+msgid "Are you sure, you want to delete the entry?"
+msgstr "آیا می خواهید این مورد را حذف کنید؟"
+
+#: .\multilingual_news\templates\multilingual_news\partials\newsentry_delete.html:7
+msgid "Delete"
+msgstr "حذف"
+
+#: .\multilingual_news\templates\multilingual_news\partials\newsentry_delete.html:8
+msgid "Cancel"
+msgstr "لغو"
+
+#: .\multilingual_news\templates\multilingual_news\partials\published_badge.html:3
+msgid "Unpublished"
+msgstr "منتشر نشده"
