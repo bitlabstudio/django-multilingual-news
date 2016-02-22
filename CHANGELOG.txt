@@ -1,5 +1,7 @@
 === ongoing ===
 
+- prepared app for Django 1.8
+
 === 2.5.2 ===
 
 - Improved get_absolute_url function to avoid timezone issues.

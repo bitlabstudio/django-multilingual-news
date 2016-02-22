@@ -5,7 +5,7 @@ A reusable Django app for managing news/blog entries in different languages.
 
 Comes with a django-cms apphook and has been prepared using Django 1.5.1 and
 django-cms 2.4.1. From version 2.0 onwards it is tested and developed further
-on Django 1.6.2 and django-cms 3.
+on Django 1.8.9 and django-cms 3.
 
 This app is based on the great https://github.com/fivethreeo/cmsplugin-blog
 and re-used some of it's snippets.
@@ -45,7 +45,7 @@ Add ``multilingual_news`` to your ``INSTALLED_APPS``::
         'document_library',
     )
 
-Run the South migrations::
+Run the migrations::
 
     ./manage.py migrate
 

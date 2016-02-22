@@ -3,7 +3,7 @@ import re
 
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.contrib.contenttypes.generic import GenericRelation
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.html import escape
 from django.utils.timezone import now
@@ -204,7 +204,6 @@ class NewsEntry(TranslatableModel):
         Category,
         verbose_name=_('Categories'),
         related_name='newsentries',
-        blank=True, null=True,
     )
 
     pub_date = models.DateTimeField(

@@ -143,6 +143,6 @@ class TaggedFeed(NewsEntriesFeed):
             content_type=content_type, tag=self.tag)
         entries = []
         for tagged_item in tagged_items:
-            if tagged_item.object.is_public():
+            if tagged_item.object and tagged_item.object.is_public():
                 entries.append(tagged_item.object)
         return entries[:10]

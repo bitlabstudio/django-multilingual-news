@@ -1,14 +1,15 @@
 """Tests for the news feeds of the `multilingual_news` app."""
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import NoReverseMatch
 
 # Note: The feeds can't be tested with the ViewRequestFactoryTestMixin
 from django_libs.tests.mixins import ViewTestMixin
-from multilingual_tags.tests.factories import TaggedItemFactory
-from people.tests.factories import PersonFactory
+from mixer.backend.django import mixer
 
-from . import factories
+from ..models import NewsEntry
+
 
 # the key part is only, that the LocaleMiddleware must be taken out.
 NON_MULTILINGUAL_MIDDLWARE_CLASSES = (
@@ -16,7 +17,6 @@ NON_MULTILINGUAL_MIDDLWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.doc.XViewMiddleware',
     'django.middleware.common.CommonMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
@@ -29,7 +29,9 @@ class NewsEntriesFeedTestCase(ViewTestMixin, TestCase):
     """Tests for the ``NewsEntriesFeed`` view class."""
 
     def setUp(self):
-        factories.NewsEntryFactory()
+        self.entry = mixer.blend(
+            'multilingual_news.NewsEntryTranslation',
+            master__author=mixer.blend('people.PersonTranslation'))
 
     def get_view_name(self):
         return 'news_rss'
@@ -46,7 +48,9 @@ class NewsEntriesFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
     """Tests for the ``NewsEntriesFeed`` view class."""
 
     def setUp(self):
-        factories.NewsEntryFactory()
+        mixer.blend(
+            'multilingual_news.NewsEntryTranslation',
+            master__author=mixer.blend('people.PersonTranslation'))
 
     def get_view_name(self):
         return 'news_rss_any'
@@ -62,8 +66,11 @@ class AuthorFeedTestCase(ViewTestMixin, TestCase):
     """Tests for the ``AuthorFeed`` view class."""
 
     def setUp(self):
-        factories.NewsEntryFactory()
-        self.author = PersonFactory()
+        author_trans = mixer.blend('people.PersonTranslation',
+                                   language_code='en')
+        self.author = author_trans.master
+        mixer.blend('multilingual_news.NewsEntryTranslation',
+                    master__author=author_trans, language_code='en')
 
     def get_view_kwargs(self):
         # TODO ID is no pretty solution
@@ -84,8 +91,11 @@ class AuthorFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
     """Tests for the ``AuthorFeed`` view class."""
 
     def setUp(self):
-        factories.NewsEntryFactory()
-        self.author = PersonFactory()
+        author_trans = mixer.blend('people.PersonTranslation',
+                                   language_code='en')
+        self.author = author_trans.master
+        mixer.blend('multilingual_news.NewsEntryTranslation',
+                    master__author=author_trans, language_code='en')
 
     def get_view_name(self):
         return 'news_rss_any_author'
@@ -106,11 +116,21 @@ class TaggedFeedTestCase(ViewTestMixin, TestCase):
     """Tests for the ``TaggedFeed`` view class."""
 
     def setUp(self):
-        entry = factories.NewsEntryFactory()
-        self.tagged_item = TaggedItemFactory(object=entry)
+        entry = mixer.blend(
+            'multilingual_news.NewsEntryTranslation',
+            language_code='en',
+            master__author=mixer.blend('people.PersonTranslation',
+                                       language_code='en'))
+        self.tag = mixer.blend('multilingual_tags.TagTranslation',
+                               language_code='en').master
+        mixer.blend(
+            'multilingual_tags.TaggedItem',
+            tag=self.tag,
+            content_type=ContentType.objects.get_for_model(NewsEntry),
+            object_id=entry.pk)
 
     def get_view_kwargs(self):
-        return {'tag': self.tagged_item.tag.slug}
+        return {'tag': self.tag.slug}
 
     def get_view_name(self):
         return 'news_rss_tagged'
@@ -127,18 +147,26 @@ class TaggedFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
     """Tests for the ``TaggedFeed`` view class."""
 
     def setUp(self):
-        entry = factories.NewsEntryFactory()
-        self.tagged_item = TaggedItemFactory(object=entry)
+        entry = NewsEntry()
+        entry.translate('en')
+        entry.save()
+        self.tag = mixer.blend('multilingual_tags.TagTranslation',
+                               language_code='en').master
+        mixer.blend(
+            'multilingual_tags.TaggedItem',
+            tag=self.tag,
+            content_type=ContentType.objects.get_for_model(NewsEntry),
+            object_id=entry.pk)
 
     def get_view_name(self):
         return 'news_rss_any_tagged'
 
     def get_view_kwargs(self):
-        return {'tag': self.tagged_item.tag.slug, 'any_language': True}
+        return {'tag': self.tag.slug, 'any_language': True}
 
     def test_view(self):
         self.is_callable()
 
     def test_tag_does_not_exist(self):
-        self.tagged_item.tag.delete()
+        self.tag.delete()
         self.is_not_callable()

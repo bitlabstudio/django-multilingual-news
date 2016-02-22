@@ -4,4 +4,4 @@
 db.sqlite
 dist/
 media/
-
+.coverage

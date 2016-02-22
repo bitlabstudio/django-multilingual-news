@@ -1,9 +1,6 @@
 """Settings that need to be set in order to run the tests."""
 import os
-import logging
 
-
-logging.getLogger("factory").setLevel(logging.WARN)
 
 DEBUG = True
 USE_TZ = True
@@ -39,16 +36,29 @@ STATICFILES_DIRS = (
     os.path.join(os.path.dirname(__file__), 'test_static'),
 )
 
-TEMPLATE_DIRS = (
-    os.path.join(os.path.dirname(__file__), '../templates'),
-)
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'APP_DIRS': True,
+    'DIRS': [os.path.join(os.path.dirname(__file__), '../templates')],
+    'OPTIONS': {
+        'context_processors': (
+            'django.contrib.auth.context_processors.auth',
+            'django.core.context_processors.i18n',
+            'django.core.context_processors.request',
+            'django.core.context_processors.media',
+            'django.core.context_processors.static',
+            'cms.context_processors.media',
+            'sekizai.context_processors.sekizai',
+        )
+    }
+}]
 
 COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(
     os.path.dirname(__file__), 'coverage')
 
 COVERAGE_MODULE_EXCLUDES = [
     '__init__$', 'tests$', 'settings$', 'urls$', 'locale$',
-    'migrations', 'fixtures', 'admin$', 'django_extensions',
+    'south_migrations', 'fixtures', 'admin$', 'django_extensions',
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -57,22 +67,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.doc.XViewMiddleware',
     'django.middleware.common.CommonMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.request',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'cms.context_processors.media',
-    'sekizai.context_processors.sekizai',
 )
 
 EXTERNAL_APPS = [
@@ -98,6 +97,7 @@ EXTERNAL_APPS = [
     'document_library',
     'people',
     'multilingual_tags',
+    'treebeard',
 ]
 
 INTERNAL_APPS = [
