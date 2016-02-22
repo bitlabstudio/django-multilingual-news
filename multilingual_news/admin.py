@@ -2,13 +2,6 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-try:
-    from cms.admin.placeholderadmin import FrontendEditableAdmin
-except ImportError:
-    class Object(object):
-        pass
-    FrontendEditableAdmin = Object
-
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 from document_library.admin import AttachmentInline
 from hvad.admin import TranslatableAdmin
@@ -25,9 +18,8 @@ class CategoryAdmin(TranslatableAdmin):
     get_title.short_description = _('Title')
 
 
-class NewsEntryAdmin(TranslatableAdmin,
-                     FrontendEditableAdmin,
-                     PlaceholderAdminMixin):
+class NewsEntryAdmin(TranslatableAdmin, PlaceholderAdminMixin,
+                     admin.ModelAdmin):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
