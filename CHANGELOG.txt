@@ -1,5 +1,7 @@
 === ongoing ===
 
+=== 2.6.2 ===
+
 - Fixed new migrations
 - Prepared app for Django 1.9
 
