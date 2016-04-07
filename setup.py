@@ -30,7 +30,6 @@ setup(
     install_requires=[
         'Django>=1.8.1',
         'django-hvad>=1.5',
-        'djangocms-utils>=0.9.5',
         'django-filer>=1.0.0',
         'Pillow>=2.4.0',
         'django-document-library',
@@ -41,8 +40,8 @@ setup(
     tests_require=[
         'fabric',
         'mixer',
-        'django-libs>=1.66',
-        'django-nose',
+        'django-libs>=1.66.15',
+        'flake8',
         'coverage',
         'django-coverage',
         'mock',

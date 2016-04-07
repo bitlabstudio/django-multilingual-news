@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import escape
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _, get_language
@@ -16,6 +17,7 @@ from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
 from multilingual_tags.models import TaggedItem
 
 
+@python_2_unicode_compatible
 class Category(TranslatableModel):
     """
     A blog ``Entry`` can belong to one category.
@@ -57,7 +59,7 @@ class Category(TranslatableModel):
         verbose_name = _('Category')
         verbose_name_plural = _('Categories')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.safe_translation_getter('title', self.slug)
 
     def get_entries(self):
@@ -132,6 +134,7 @@ class NewsEntryManager(TranslationManager):
         return qs[:limit]
 
 
+@python_2_unicode_compatible
 class NewsEntry(TranslatableModel):
     """
     A news entry consists of a title, content and media fields.
@@ -271,7 +274,7 @@ class NewsEntry(TranslatableModel):
         verbose_name = _('News Entry')
         verbose_name_plural = _('News Entries')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.safe_translation_getter('title', 'Untranslated entry')
 
     @property

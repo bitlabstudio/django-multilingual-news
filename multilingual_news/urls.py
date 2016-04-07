@@ -1,13 +1,12 @@
 """URLs for the ``multilingual_news`` app."""
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from .feeds import AuthorFeed, NewsEntriesFeed, TaggedFeed
 from .models import NewsEntry
 from . import views
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # feed urls
     url(r'^rss/any/tagged/(?P<tag>[^/]*)/$',
         TaggedFeed(), {'any_language': True},
@@ -53,4 +52,4 @@ urlpatterns = patterns(
     url(r'^get-entries/',
         views.GetEntriesAjaxView.as_view(),
         name='news_get_entries',),
-)
+]

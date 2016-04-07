@@ -18,17 +18,12 @@ class CategoryAdmin(TranslatableAdmin):
     get_title.short_description = _('Title')
 
 
-class NewsEntryAdmin(TranslatableAdmin, PlaceholderAdminMixin,
-                     admin.ModelAdmin):
+class NewsEntryAdmin(PlaceholderAdminMixin, TranslatableAdmin):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
         'get_title', 'pub_date', 'author', 'get_is_published',
         'get_categories', 'all_translations']
-
-    def __init__(self, *args, **kwargs):
-        super(NewsEntryAdmin, self).__init__(*args, **kwargs)
-        self.prepopulated_fields = {'slug': ('title', )}
 
     def get_is_published(self, obj):
         return obj.is_published

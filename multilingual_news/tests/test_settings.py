@@ -47,7 +47,6 @@ TEMPLATES = [{
             'django.core.context_processors.request',
             'django.core.context_processors.media',
             'django.core.context_processors.static',
-            'cms.context_processors.media',
             'sekizai.context_processors.sekizai',
         )
     }
@@ -84,7 +83,6 @@ EXTERNAL_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'django.contrib.sites',
-    'django_nose',
     'djangocms_text_ckeditor',  # must come before cms
     'cms',
     'djangocms_link',
