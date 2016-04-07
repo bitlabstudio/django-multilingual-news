@@ -1,5 +1,9 @@
 === ongoing ===
 
+=== 2.6.3 ===
+
+- Fixed admin
+
 === 2.6.2 ===
 
 - Fixed new migrations
