@@ -43,6 +43,15 @@ Add ``multilingual_news`` to your ``INSTALLED_APPS``::
         'hvad',
         'multilingual_tags',
         'document_library',
+
+        # cms related requirements (please check the relevant `documentation <https://github.com/divio/django-cms>`)
+        'cms',
+        'menus',
+        'treebeard',
+        
+        # filer related requirements (please check the relevant `documentation <https://github.com/divio/django-filer>`)
+        'filer',
+        'easy_thumbnails',
     )
 
 Run the migrations::
