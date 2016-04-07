@@ -22,8 +22,8 @@ class NewsEntryAdmin(PlaceholderAdminMixin, TranslatableAdmin):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
-        'get_title', 'pub_date', 'author', 'get_is_published',
-        'get_categories', 'all_translations']
+        'get_title', 'pub_date', 'get_is_published', 'get_categories',
+        'all_translations']
 
     def get_is_published(self, obj):
         return obj.is_published

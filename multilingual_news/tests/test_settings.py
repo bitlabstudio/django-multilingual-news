@@ -86,6 +86,7 @@ EXTERNAL_APPS = [
     'djangocms_text_ckeditor',  # must come before cms
     'cms',
     'djangocms_link',
+    'django_libs',
     'sekizai',
     'menus',
     'mptt',
