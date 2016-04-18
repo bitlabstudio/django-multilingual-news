@@ -1,5 +1,8 @@
 === ongoing ===
 
+
+=== 2.6.4 ===
+
 - Fixed tests
 - Increased coverage
 - Prepared app for Python 3.5
