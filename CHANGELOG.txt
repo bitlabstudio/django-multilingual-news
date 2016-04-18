@@ -1,5 +1,9 @@
 === ongoing ===
 
+- Fixed tests
+- Increased coverage
+- Prepared app for Python 3.5
+
 === 2.6.3 ===
 
 - Fixed admin

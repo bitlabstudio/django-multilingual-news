@@ -1,0 +1,8 @@
+Django
+django-hvad
+django-filer
+Pillow
+django-document-library
+django-people
+django-multilingual-tags
+django-cms

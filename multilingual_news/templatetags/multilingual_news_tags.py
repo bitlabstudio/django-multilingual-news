@@ -42,10 +42,11 @@ def get_recent_news(context, check_language=True, limit=3, exclude=None,
         'limit': limit,
         'exclude': exclude,
     }
-    try:
-        filter_kwargs['category'] = Category.objects.get(slug=category)
-    except Category.DoesNotExist:
-        pass
+    if category:
+        try:
+            filter_kwargs['category'] = Category.objects.get(slug=category)
+        except Category.DoesNotExist:
+            pass
     qs = NewsEntry.objects.recent(**filter_kwargs)
     return qs
 

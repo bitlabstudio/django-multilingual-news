@@ -37,16 +37,4 @@ setup(
         'django-multilingual-tags',
         'django-cms>=3.0',
     ],
-    tests_require=[
-        'fabric',
-        'mixer',
-        'django-libs>=1.66.15',
-        'flake8',
-        'coverage',
-        'django-coverage',
-        'mock',
-        'djangocms-text-ckeditor',
-        'djangocms-link',
-    ],
-    test_suite='multilingual_news.tests.runtests.runtests',
 )

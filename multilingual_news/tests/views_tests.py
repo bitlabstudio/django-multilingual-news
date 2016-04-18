@@ -1,8 +1,9 @@
 """Tests for the views of the ``multilingual_news`` app."""
 from django.contrib.contenttypes.models import ContentType
-# from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 from django.test import TestCase
-# from django.utils.timezone import timedelta, now
+from django.utils.translation import activate
+from django.utils.timezone import timedelta, now
 
 from django_libs.tests.mixins import ViewRequestFactoryTestMixin
 from mixer.backend.django import mixer
@@ -42,21 +43,20 @@ class DeleteNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     def setUp(self):
         self.user = mixer.blend('auth.User')
         self.admin = mixer.blend('auth.User', is_superuser=True)
-        self.entry = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'))
-        self.entry2 = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'))
+        self.entry = mixer.blend('multilingual_news.NewsEntry')
+        translation = self.entry.translate('en')
+        translation.is_published = True
+        translation.save()
+
+        self.entry2 = mixer.blend('multilingual_news.NewsEntry')
+        translation = self.entry2.translate('en')
+        translation.is_published = True
+        translation.save()
 
     def test_view(self):
         self.should_redirect_to_login_when_anonymous()
         self.is_not_callable(user=self.user)
         self.is_not_callable(user=self.user, ajax=True)
-        """
-        Disabled.
-
-        We need to find out why mixer is not creating a master instance.
 
         self.is_callable(user=self.admin)
         self.is_callable(user=self.admin, ajax=True)
@@ -65,11 +65,9 @@ class DeleteNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
             'After posting, there should only be one entry in the db.'))
 
         self.is_postable(user=self.admin, kwargs={'pk': self.entry2.pk},
-                         to=reverse('news_list'))
+                         to_url_name='news_list')
         self.assertEqual(models.NewsEntry.objects.count(), 0, msg=(
-            'After posting again for the other entry, there should be'
-            ' no more entry in the database.'))
-        """
+            'After posting, there should be no entry in the db.'))
 
 
 class GetEntriesAjaxViewTestCase(ViewRequestFactoryTestMixin, TestCase):
@@ -115,9 +113,10 @@ class PublishNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     def setUp(self):
         self.user = mixer.blend('auth.User')
         self.admin = mixer.blend('auth.User', is_superuser=True)
-        self.entry = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'))
+        self.entry = mixer.blend('multilingual_news.NewsEntry')
+        self.en_entry = self.entry.translate('en')
+        self.en_entry.slug = 'foo'
+        self.en_entry.save()
 
     def test_view(self):
         self.should_redirect_to_login_when_anonymous()
@@ -131,22 +130,16 @@ class PublishNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.is_not_callable(post=True, user=self.user)
         self.is_not_callable(post=True, user=self.admin, kwargs={'pk': 999})
 
-        """
-        Disabled.
-
-        We need to find out why mixer is not creating a master instance.
-
         self.is_postable(user=self.admin, data={'action': 'publish'},
                          to=reverse('news_detail', kwargs={
-                             'slug': self.entry.slug}))
+                             'slug': self.en_entry.slug}))
         self.assertTrue(
             models.NewsEntry.objects.get(pk=self.entry.pk).is_published)
         self.is_postable(user=self.admin, data={'action': 'unpublish'},
                          to=reverse('news_detail', kwargs={
-                             'slug': self.entry.slug}))
+                             'slug': self.en_entry.slug}))
         self.assertFalse(
             models.NewsEntry.objects.get(pk=self.entry.pk).is_published)
-        """
 
 
 class TaggedNewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
@@ -176,62 +169,57 @@ class TaggedNewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.is_callable(kwargs={'tag': 'foobar'})
 
 
-'''
-Disabled.
-
-We need to find out why mixer is not creating a master instance.
-
 class NewsDateDetailViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     """Tests for the ``NewsDateDetailView`` view."""
     view_class = views.NewsDateDetailView
 
     def setUp(self):
-        self.entry = mixer.blend('multilingual_news.NewsEntryTranslation',
-                                 pub_date=now() - timedelta(days=1))
-        self.en_trans = self.entry.translations.get(language_code='en')
-        self.entry.translate('de')
-        self.entry.title = 'German title'
-        self.entry.slug = 'german-title'
-        self.entry.save()
-        self.de_trans = self.entry.translations.get(language_code='de')
-        self.entry = models.NewsEntry.objects.language('en').get(
-            pk=self.entry.pk)
+        self.entry = mixer.blend('multilingual_news.NewsEntry')
+        self.en_trans = self.entry.translate('en')
+        self.en_trans.pub_date = now() - timedelta(days=1)
+        self.de_trans = self.entry.translate('de')
+        self.de_trans.title = 'German title'
+        self.de_trans.slug = 'german-title'
+        self.de_trans.save()
 
     def get_view_name(self):
         return 'news_detail'
 
     def get_view_kwargs(self):
+        activate('en')
+        self.is_callable()
         return {
             'slug': self.en_trans.slug,
-            'year': unicode(self.entry.pub_date.year),
-            'month': unicode(self.entry.pub_date.month),
-            'day': unicode(self.entry.pub_date.day),
+            'year': str(self.entry.pub_date.year),
+            'month': str(self.entry.pub_date.month),
+            'day': str(self.entry.pub_date.day),
         }
 
     def test_view(self):
-        self.is_callable()
-        data = {
+        kwargs = {
             'slug': self.en_trans.slug,
             'year': u'9999',
-            'month': unicode(self.entry.pub_date.month),
-            'day': unicode(self.entry.pub_date.day),
+            'month': str(self.entry.pub_date.month),
+            'day': str(self.entry.pub_date.day),
         }
-        self.is_not_callable(kwargs=data)
+        self.is_not_callable(kwargs=kwargs)
 
-        data = {
+        kwargs = {
             'slug': 'foo',
-            'year': unicode(self.entry.pub_date.year),
-            'month': unicode(self.entry.pub_date.month),
-            'day': unicode(self.entry.pub_date.day),
+            'year': str(self.entry.pub_date.year),
+            'month': str(self.entry.pub_date.month),
+            'day': str(self.entry.pub_date.day),
         }
-        self.is_not_callable(kwargs=data)
+        self.is_not_callable(kwargs=kwargs)
 
-        data = {
+        kwargs = {
             'slug': self.de_trans.slug,
-            'year': unicode(self.entry.pub_date.year),
-            'month': unicode(self.entry.pub_date.month),
-            'day': unicode(self.entry.pub_date.day),
+            'year': str(self.entry.pub_date.year),
+            'month': str(self.entry.pub_date.month),
+            'day': str(self.entry.pub_date.day),
         }
+        activate('de')
+        self.is_callable(kwargs=kwargs)
 
 
 class NewsDetailPreviewViewTestCase(ViewRequestFactoryTestMixin, TestCase):
@@ -247,15 +235,16 @@ class NewsDetailPreviewViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         }
 
     def setUp(self):
-        self.entry = mixer.blend('multilingual_news.NewsEntryTranslation',
-                                 pub_date=now() - timedelta(days=1))
-        self.en_trans = self.entry.translations.get(language_code='en')
+        self.entry = mixer.blend('multilingual_news.NewsEntry')
+        self.en_trans = self.entry.translate('en')
+        self.en_trans.slug = 'foo'
+        self.en_trans.pub_date = now() - timedelta(days=1)
+        self.en_trans.save()
 
         self.user = mixer.blend('auth.User')
         self.admin = mixer.blend('auth.User', is_superuser=True)
 
     def test_view(self):
-        self.should_redirect_to_login_when_anonymous()
+        activate('en')
         self.is_not_callable(user=self.user)
         self.is_callable(user=self.admin)
-'''

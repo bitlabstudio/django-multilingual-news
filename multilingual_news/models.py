@@ -300,20 +300,18 @@ class NewsEntry(TranslatableModel):
         """
         content = ''
         for plugin in self.excerpt.get_plugins():
-            try:
-                if plugin.text.language == get_language():
-                    content = plugin.text.body
-            except:
-                pass
+            if (plugin.plugin_type == 'TextPlugin' and
+                    plugin.djangocms_text_ckeditor_text.language ==
+                    get_language()):
+                content = plugin.djangocms_text_ckeditor_text.body
             if content:
                 break
         if not content:
             for plugin in self.content.get_plugins():
-                try:
-                    if plugin.text.language == get_language():
-                        content = plugin.text.body
-                except:
-                    pass
+                if (plugin.plugin_type == 'TextPlugin' and
+                        plugin.djangocms_text_ckeditor_text.language ==
+                        get_language()):
+                    content = plugin.djangocms_text_ckeditor_text.body
                 if content:
                     break
 
@@ -336,8 +334,12 @@ class NewsEntry(TranslatableModel):
             self.pub_date is None or self.pub_date <= now())
 
     def save(self, *args, **kwargs):
-        if self.is_published and self.pub_date is None:
-            self.pub_date = now()
+        try:
+            if self.is_published and self.pub_date is None:
+                self.pub_date = now()
+        except AttributeError:
+            # If there's no translation, go on
+            pass
         super(NewsEntry, self).save(*args, **kwargs)
 
 

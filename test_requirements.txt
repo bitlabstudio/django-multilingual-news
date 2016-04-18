@@ -1,0 +1,11 @@
+fabric3
+mixer
+django-libs
+flake8
+coverage
+django-coverage
+mock
+djangocms-text-ckeditor
+djangocms-link
+ipdb
+tox
