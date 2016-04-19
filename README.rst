@@ -65,7 +65,7 @@ Usage
 Placeholders ("excerpt" and "content")
 ++++++++++++++++++++++++++++++++++++++
 
-To add content to a news entry, you can make use of two cms placeholders. The excerpt is used in list views only. Adding content to a placeholder works pretty much the same like adding content to a cms page. First, create a news entry, then go to its detail view. Use the django cms toolbar to add plugins to the placeholders. For more information visit [Django CMS' documentation](http://docs.django-cms.org/en/latest/introduction/templates_placeholders.html#placeholders) .
+To add content to a news entry, you can make use of two cms placeholders. The excerpt is used in list views only. Adding content to a placeholder works pretty much the same like adding content to a cms page. First, create a news entry, then go to its detail view. Use the django cms toolbar to add plugins to the placeholders. For more information visit `Django CMS' documentation <http://docs.django-cms.org/en/latest/introduction/templates_placeholders.html#placeholders>`_.
 
 Using the apphook
 +++++++++++++++++
