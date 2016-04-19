@@ -5,7 +5,7 @@ A reusable Django app for managing news/blog entries in different languages.
 
 Comes with a django-cms apphook and has been prepared using Django 1.5.1 and
 django-cms 2.4.1. From version 2.0 onwards it is tested and developed further
-on Django 1.8.9 and django-cms 3.
+on Django 1.9 and django-cms 3.
 
 This app is based on the great https://github.com/fivethreeo/cmsplugin-blog
 and re-used some of it's snippets.
@@ -59,52 +59,13 @@ Run the migrations::
     ./manage.py migrate
 
 
-Twitter Bootstrap 3
--------------------
-
-List of Bootstrap compatible features:
-
-* A delete confirmation modal for deleting news entries.
-
-For support of the Twitter Bootstrap 3 functionality, you need to add the library to your template.
-
-.. code-block:: html
-
-
-    <script type="text/javascript" src="{% static "multilingual_news/js/multilingual_news.bootstrap.js" %}"></script>
-
-
-Delete confirmation modal
-+++++++++++++++++++++++++
-
-Add the following markup to your template.
-
-.. code-block:: html
-
-    {% load static %}
-
-    {# add this before multilingual_news.bootstrap.js #}
-    <script type="text/javascript" src="{% static "django_libs/js/modals.js" %}"></script>
-
-    <div id="ajax-modal" class="modal fade" tabindex="-1">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            </div>
-            <div class="modal-body">
-            </div>
-        </div>
-    </div>
-
-To trigger the modal, create a link that looks like this.
-
-.. code-block:: html
-
-    <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal">Delete</a>
-
-
 Usage
 -----
+
+Placeholders ("excerpt" and "content")
+++++++++++++++++++++++++++++++++++++++
+
+To add content to a news entry, you can make use of two cms placeholders. The excerpt is only used in list views. Adding content to a placeholder works pretty much the same like adding content to a cms page. First, create a news entry, then go to its detail view. Use the django cms toolbar to add plugins to the placeholders. For more information visit [Django CMS' documentation](http://docs.django-cms.org/en/latest/introduction/templates_placeholders.html#placeholders).
 
 Using the apphook
 +++++++++++++++++
@@ -179,6 +140,50 @@ use the template tags ``get_newsentry_meta_description`` and
 
     <title>{% get_newsentry_meta_title entry_instance %}</title>
     <meta name="description" content="{% get_newsentry_meta_description entry_instance %}" />
+    
+    
+Twitter Bootstrap 3
+-------------------
+
+List of Bootstrap compatible features:
+
+* A delete confirmation modal for deleting news entries.
+
+For support of the Twitter Bootstrap 3 functionality, you need to add the Bootstrap js library to your template. If you haven't already 
+
+.. code-block:: html
+
+
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+Delete confirmation modal
++++++++++++++++++++++++++
+
+Add the following markup to your template.
+
+.. code-block:: html
+
+    {% load static %}
+
+    {# add this before bootstrap.js #}
+    <script type="text/javascript" src="{% static "django_libs/js/modals.js" %}"></script>
+
+    <div id="ajax-modal" class="modal fade" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+
+To trigger the modal, create a link that looks like this.
+
+.. code-block:: html
+
+    <a href="{% url "news_delete" pk=news_entry.pk %}" data-class="toggleDeleteModal">Delete</a>
 
 
 Settings
@@ -195,28 +200,21 @@ Amount of news entries to display in the list view.
 Contribute
 ----------
 
-If you want to contribute to this project, please perform the following steps::
+If you want to contribute to this project, please perform the following steps
+
+.. code-block:: bash
 
     # Fork this repository
     # Clone your fork
-    $ mkvirtualenv -p python2.7 django-multilingual-news
-    $ pip install -r requirements.txt
-    $ ./logger/tests/runtests.sh
-    # You should get no failing tests
+    mkvirtualenv -p python2.7 django-multilingual-news
+    make develop
 
-    $ git co -b feature_branch master
+    git co -b feature_branch master
     # Implement your feature and tests
-    # Describe your change in the CHANGELOG.txt
-    $ git add . && git commit
-    $ git push origin feature_branch
+    git add . && git commit
+    git push -u origin feature_branch
     # Send us a pull request for your feature branch
 
-Whenever you run the tests a coverage output will be generated in
-``tests/coverage/index.html``. When adding new features, please make sure that
-you keep the coverage at 100%.
-
-
-Roadmap
--------
-
-Check the issue tracker on github for milestones and features to come.
+In order to run the tests, simply execute ``tox``. This will install two new
+environments (for Django 1.8 and Django 1.9) and run the tests against both
+environments.
