@@ -1,5 +1,7 @@
 === ongoing ===
 
+=== 2.6.5 ===
+
 - Added generic relation to news entry
 
 === 2.6.4 ===
