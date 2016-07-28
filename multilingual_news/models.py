@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _, get_language
 
 from cms.models.fields import PlaceholderField
 from cms.models import CMSPlugin
+from document_library.models import Attachment
 from filer.fields.image import FilerImageField
 from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
 from multilingual_tags.models import TaggedItem
@@ -267,6 +268,8 @@ class NewsEntry(TranslatableModel):
     )
 
     tags = GenericRelation(TaggedItem)
+    attachments = GenericRelation(Attachment,
+                                  related_query_name='news_entries')
     objects = NewsEntryManager()
 
     class Meta:
