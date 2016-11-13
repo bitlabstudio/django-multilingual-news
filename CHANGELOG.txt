@@ -1,5 +1,9 @@
 === ongoing ===
 
+=== 2.6.6 ===
+
+- Raise 404 if news category is non-existent
+
 === 2.6.5 ===
 
 - Added generic relation to news entry
