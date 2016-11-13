@@ -23,7 +23,10 @@ class CategoryListView(ListView):
     context_object_name = 'newsentries'
 
     def dispatch(self, request, *args, **kwargs):
-        self.category = Category.objects.get(slug=kwargs.get('category'))
+        try:
+            self.category = Category.objects.get(slug=kwargs.get('category'))
+        except Category.DoesNotExist:
+            raise Http404
         return super(CategoryListView, self).dispatch(
             request, *args, **kwargs)
 

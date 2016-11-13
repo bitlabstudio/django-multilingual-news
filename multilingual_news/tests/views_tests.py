@@ -31,6 +31,7 @@ class CategoryListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
 
     def test_view(self):
         self.is_callable()
+        self.is_not_callable(kwargs={'category': 'foo'})
 
 
 class DeleteNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):

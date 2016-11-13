@@ -38,6 +38,13 @@ class NewsEntryTestCase(TestCase):
             result, reverse('news_preview', kwargs={'slug': slug}), msg=(
                 'Should return the preview url.'))
 
+    def test_get_absolute_url(self):
+        result = self.instance.get_absolute_url()
+        slug = self.instance.slug
+        self.assertEqual(
+            result, reverse('news_detail', kwargs={'slug': slug}), msg=(
+                'Should return the detail url.'))
+
     def test_category(self):
         self.assertIsNone(self.instance.category, msg=(
             'Should return None if entry has no category.'))
