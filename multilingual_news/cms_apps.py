@@ -7,7 +7,9 @@ from cms.apphook_pool import apphook_pool
 
 class MultilingualNewsApphook(CMSApp):
     name = _("Multilingual News Apphook")
-    urls = ["multilingual_news.urls"]
+
+    def get_urls(self, page=None, language=None, **kwargs):
+        return ["multilingual_news.urls"]
 
 
 apphook_pool.register(MultilingualNewsApphook)
