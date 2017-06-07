@@ -1,5 +1,7 @@
 === ongoing ===
 
+=== 2.6.8 ===
+
 - Added workaround to prepopulate title field in admin
 
 === 2.6.7 ===
