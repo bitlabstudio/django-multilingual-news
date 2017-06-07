@@ -25,6 +25,11 @@ class NewsEntryAdmin(PlaceholderAdminMixin, TranslatableAdmin):
         'get_title', 'pub_date', 'get_is_published', 'get_categories',
         'all_translations']
 
+    def __init__(self, *args, **kwargs):
+        # Workaround for translated fields
+        super(NewsEntryAdmin, self).__init__(*args, **kwargs)
+        self.prepopulated_fields = {'slug': ('title', )}
+
     def get_is_published(self, obj):
         return obj.is_published
     get_is_published.short_description = _('Is published')
