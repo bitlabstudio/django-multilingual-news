@@ -1,5 +1,9 @@
 === ongoing ===
 
+=== 2.6.9 ===
+
+- Removed prepopulated fields from admin
+
 === 2.6.8 ===
 
 - Added workaround to prepopulate title field in admin
