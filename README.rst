@@ -40,7 +40,7 @@ Add ``multilingual_news`` to your ``INSTALLED_APPS``::
         'django_libs',
         'multilingual_news',
         'people',
-        'hvad',
+        'parler',
         'multilingual_tags',
         'document_library',
 

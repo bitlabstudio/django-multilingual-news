@@ -1,8 +1,8 @@
-Django
-django-hvad
-django-filer
+Django==2.2.28
+django-parler==2.3
+django-filer==2.2
 Pillow
-django-document-library
-django-people
-django-multilingual-tags
-django-cms
+git+https://github.com/bitlabstudio/django-document-library.git@2c7040f676f2b0acd4c3790c39b14b8b76c6440d
+git+https://github.com/bitlabstudio/django-people.git@24d679b5473fa6007aa0e97d0745b03540dc595c
+git+https://github.com/bitlabstudio/django-multilingual-tags.git@537cdf86572593a1276c49c56a5b51aeef3fab72
+django-cms==3.7.4

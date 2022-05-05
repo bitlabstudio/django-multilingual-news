@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import NoReverseMatch
+from django.urls import NoReverseMatch
 
 # Note: The feeds can't be tested with the ViewRequestFactoryTestMixin
 from django_libs.tests.mixins import ViewTestMixin
@@ -29,9 +29,7 @@ class NewsEntriesFeedTestCase(ViewTestMixin, TestCase):
     """Tests for the ``NewsEntriesFeed`` view class."""
 
     def setUp(self):
-        self.entry = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'))
+        self.entry = mixer.blend('multilingual_news.NewsEntry', author=mixer.blend('people.Person'))
 
     def get_view_name(self):
         return 'news_rss'
@@ -39,7 +37,7 @@ class NewsEntriesFeedTestCase(ViewTestMixin, TestCase):
     def test_view_multilingual(self):
         self.is_callable()
 
-    @override_settings(MIDDLEWARE_CLASSES=NON_MULTILINGUAL_MIDDLWARE_CLASSES)
+    @override_settings(MIDDLEWAR=NON_MULTILINGUAL_MIDDLWARE_CLASSES)
     def test_view(self):
         self.is_callable()
 
@@ -48,9 +46,7 @@ class NewsEntriesFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
     """Tests for the ``NewsEntriesFeed`` view class."""
 
     def setUp(self):
-        mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'))
+        mixer.blend('multilingual_news.NewsEntry', author=mixer.blend('people.Person'))
 
     def get_view_name(self):
         return 'news_rss_any'
@@ -66,11 +62,12 @@ class AuthorFeedTestCase(ViewTestMixin, TestCase):
     """Tests for the ``AuthorFeed`` view class."""
 
     def setUp(self):
-        author_trans = mixer.blend('people.PersonTranslation',
-                                   language_code='en')
-        self.author = author_trans.master
-        mixer.blend('multilingual_news.NewsEntryTranslation',
-                    master__author=author_trans, language_code='en')
+        self.author = mixer.blend('people.Person')
+        entry = mixer.blend('multilingual_news.NewsEntry', author=self.author)
+        entry.set_current_language('en')
+        entry.title = 'Foo'
+        entry.slug = 'foo'
+        entry.save()
 
     def get_view_kwargs(self):
         # TODO ID is no pretty solution
@@ -82,7 +79,7 @@ class AuthorFeedTestCase(ViewTestMixin, TestCase):
     def test_view_multilingual(self):
         self.is_callable()
 
-    @override_settings(MIDDLEWARE_CLASSES=NON_MULTILINGUAL_MIDDLWARE_CLASSES)
+    @override_settings(MIDDLEWARE=NON_MULTILINGUAL_MIDDLWARE_CLASSES)
     def test_view(self):
         self.is_callable()
 
@@ -91,11 +88,12 @@ class AuthorFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
     """Tests for the ``AuthorFeed`` view class."""
 
     def setUp(self):
-        author_trans = mixer.blend('people.PersonTranslation',
-                                   language_code='en')
-        self.author = author_trans.master
-        mixer.blend('multilingual_news.NewsEntryTranslation',
-                    master__author=author_trans, language_code='en')
+        self.author = mixer.blend('people.Person')
+        entry = mixer.blend('multilingual_news.NewsEntry', author=self.author)
+        entry.set_current_language('en')
+        entry.title = 'Foo'
+        entry.slug = 'foo'
+        entry.save()
 
     def get_view_name(self):
         return 'news_rss_any_author'
@@ -117,12 +115,9 @@ class TaggedFeedTestCase(ViewTestMixin, TestCase):
 
     def setUp(self):
         entry = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            language_code='en',
-            master__author=mixer.blend('people.PersonTranslation',
-                                       language_code='en'))
-        self.tag = mixer.blend('multilingual_tags.TagTranslation',
-                               language_code='en').master
+            'multilingual_news.NewsEntry',
+            author=mixer.blend('people.Person'))
+        self.tag = mixer.blend('multilingual_tags.Tag')
         mixer.blend(
             'multilingual_tags.TaggedItem',
             tag=self.tag,
@@ -138,7 +133,7 @@ class TaggedFeedTestCase(ViewTestMixin, TestCase):
     def test_view_multilingual(self):
         self.is_callable()
 
-    @override_settings(MIDDLEWARE_CLASSES=NON_MULTILINGUAL_MIDDLWARE_CLASSES)
+    @override_settings(MIDDLEWARE=NON_MULTILINGUAL_MIDDLWARE_CLASSES)
     def test_view(self):
         self.is_callable()
 
@@ -148,10 +143,12 @@ class TaggedFeedAnyLanguageTestCase(ViewTestMixin, TestCase):
 
     def setUp(self):
         entry = NewsEntry()
-        entry.translate('en')
+        entry.set_current_language('en')
         entry.save()
-        self.tag = mixer.blend('multilingual_tags.TagTranslation',
-                               language_code='en').master
+        self.tag = mixer.blend('multilingual_tags.Tag')
+        self.tag.set_current_language('en')
+        self.tag.name = 'Foo'
+        self.tag.save()
         mixer.blend(
             'multilingual_tags.TaggedItem',
             tag=self.tag,

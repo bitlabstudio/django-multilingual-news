@@ -1,6 +1,6 @@
 """Tests for the views of the ``multilingual_news`` app."""
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 from django.utils.translation import activate
 from django.utils.timezone import timedelta, now
@@ -17,17 +17,18 @@ class CategoryListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     view_class = views.CategoryListView
 
     def setUp(self):
-        self.category = mixer.blend('multilingual_news.CategoryTranslation')
+        self.category = mixer.blend('multilingual_news.Category')
         self.entry = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'),
-            category=self.category)
+            'multilingual_news.NewsEntry',
+            author=mixer.blend('people.Person'),
+            categories=[self.category],
+        )
 
     def get_view_name(self):
         return 'news_archive_category'
 
     def get_view_kwargs(self):
-        return {'category': self.category.master.slug}
+        return {'category': self.category.slug}
 
     def test_view(self):
         self.is_callable()
@@ -45,14 +46,14 @@ class DeleteNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.user = mixer.blend('auth.User')
         self.admin = mixer.blend('auth.User', is_superuser=True)
         self.entry = mixer.blend('multilingual_news.NewsEntry')
-        translation = self.entry.translate('en')
-        translation.is_published = True
-        translation.save()
+        self.entry.set_current_language('en')
+        self.entry.is_published = True
+        self.entry.save()
 
         self.entry2 = mixer.blend('multilingual_news.NewsEntry')
-        translation = self.entry2.translate('en')
-        translation.is_published = True
-        translation.save()
+        self.entry2.set_current_language('en')
+        self.entry2.is_published = True
+        self.entry2.save()
 
     def test_view(self):
         self.should_redirect_to_login_when_anonymous()
@@ -82,8 +83,8 @@ class GetEntriesAjaxViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.is_callable(data={'count': 1})
 
     def test_view_with_category(self):
-        category = mixer.blend('multilingual_news.CategoryTranslation')
-        self.is_callable(data={'category': category.master.slug})
+        category = mixer.blend('multilingual_news.Category')
+        self.is_callable(data={'category': category.slug})
 
 
 class NewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
@@ -91,9 +92,7 @@ class NewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     view_class = views.NewsListView
 
     def setUp(self):
-        mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'))
+        mixer.blend('multilingual_news.NewsEntry', author=mixer.blend('people.Person'))
         self.admin = mixer.blend('auth.User', is_superuser=True)
 
     def get_view_name(self):
@@ -115,9 +114,10 @@ class PublishNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.user = mixer.blend('auth.User')
         self.admin = mixer.blend('auth.User', is_superuser=True)
         self.entry = mixer.blend('multilingual_news.NewsEntry')
-        self.en_entry = self.entry.translate('en')
-        self.en_entry.slug = 'foo'
-        self.en_entry.save()
+        self.entry.set_current_language('en')
+        self.entry.is_published = True
+        self.entry.slug = 'foo'
+        self.entry.save()
 
     def test_view(self):
         self.should_redirect_to_login_when_anonymous()
@@ -133,12 +133,12 @@ class PublishNewsEntryViewTestCase(ViewRequestFactoryTestMixin, TestCase):
 
         self.is_postable(user=self.admin, data={'action': 'publish'},
                          to=reverse('news_detail', kwargs={
-                             'slug': self.en_entry.slug}))
+                             'slug': self.entry.slug}))
         self.assertTrue(
             models.NewsEntry.objects.get(pk=self.entry.pk).is_published)
         self.is_postable(user=self.admin, data={'action': 'unpublish'},
                          to=reverse('news_detail', kwargs={
-                             'slug': self.en_entry.slug}))
+                             'slug': self.entry.slug}))
         self.assertFalse(
             models.NewsEntry.objects.get(pk=self.entry.pk).is_published)
 
@@ -150,9 +150,11 @@ class TaggedNewsListViewTestCase(ViewRequestFactoryTestMixin, TestCase):
     def setUp(self):
         entry = mixer.blend(
             'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'))
-        self.tag = mixer.blend('multilingual_tags.TagTranslation',
-                               language_code='en').master
+            master__author=mixer.blend('people.Person'))
+        self.tag = mixer.blend('multilingual_tags.Tag')
+        self.tag.set_current_language('en')
+        self.tag.name = 'Foo'
+        self.tag.save()
         mixer.blend(
             'multilingual_tags.TaggedItem',
             tag=self.tag,
@@ -176,12 +178,15 @@ class NewsDateDetailViewTestCase(ViewRequestFactoryTestMixin, TestCase):
 
     def setUp(self):
         self.entry = mixer.blend('multilingual_news.NewsEntry')
-        self.en_trans = self.entry.translate('en')
-        self.en_trans.pub_date = now() - timedelta(days=1)
-        self.de_trans = self.entry.translate('de')
-        self.de_trans.title = 'German title'
-        self.de_trans.slug = 'german-title'
-        self.de_trans.save()
+        self.entry.set_current_language('en')
+        self.entry.is_published = True
+        self.entry.pub_date = now() - timedelta(days=1)
+        self.entry.save()
+        self.entry.set_current_language('de')
+        self.entry.is_published = True
+        self.entry.title = 'German title'
+        self.entry.slug = 'german-title'
+        self.entry.save()
 
     def get_view_name(self):
         return 'news_detail'
@@ -190,7 +195,7 @@ class NewsDateDetailViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         activate('en')
         self.is_callable()
         return {
-            'slug': self.en_trans.slug,
+            'slug': self.entry.slug,
             'year': str(self.entry.pub_date.year),
             'month': str(self.entry.pub_date.month),
             'day': str(self.entry.pub_date.day),
@@ -198,7 +203,7 @@ class NewsDateDetailViewTestCase(ViewRequestFactoryTestMixin, TestCase):
 
     def test_view(self):
         kwargs = {
-            'slug': self.en_trans.slug,
+            'slug': self.entry.slug,
             'year': u'9999',
             'month': str(self.entry.pub_date.month),
             'day': str(self.entry.pub_date.day),
@@ -214,7 +219,7 @@ class NewsDateDetailViewTestCase(ViewRequestFactoryTestMixin, TestCase):
         self.is_not_callable(kwargs=kwargs)
 
         kwargs = {
-            'slug': self.de_trans.slug,
+            'slug': 'german-title',
             'year': str(self.entry.pub_date.year),
             'month': str(self.entry.pub_date.month),
             'day': str(self.entry.pub_date.day),
@@ -232,15 +237,15 @@ class NewsDetailPreviewViewTestCase(ViewRequestFactoryTestMixin, TestCase):
 
     def get_view_kwargs(self):
         return {
-            'slug': self.en_trans.slug,
+            'slug': 'foo',
         }
 
     def setUp(self):
         self.entry = mixer.blend('multilingual_news.NewsEntry')
-        self.en_trans = self.entry.translate('en')
-        self.en_trans.slug = 'foo'
-        self.en_trans.pub_date = now() - timedelta(days=1)
-        self.en_trans.save()
+        self.entry.set_current_language('en')
+        self.entry.slug = 'foo'
+        self.entry.pub_date = now() - timedelta(days=1)
+        self.entry.save()
 
         self.user = mixer.blend('auth.User')
         self.admin = mixer.blend('auth.User', is_superuser=True)

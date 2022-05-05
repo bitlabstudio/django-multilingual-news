@@ -29,7 +29,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'Django>=1.8.1',
-        'django-hvad>=1.5',
+        'django-parler>=2.3',
         'django-filer>=1.0.0',
         'Pillow>=2.4.0',
         'django-document-library',

@@ -1,11 +1,10 @@
 """Models for the ``multilingual_news`` app."""
 import re
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import escape
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _, get_language
@@ -14,11 +13,11 @@ from cms.models.fields import PlaceholderField
 from cms.models import CMSPlugin
 from document_library.models import Attachment
 from filer.fields.image import FilerImageField
-from hvad.models import TranslatableModel, TranslatedFields, TranslationManager
+from parler.managers import TranslationManager
+from parler.models import TranslatableModel, TranslatedFields
 from multilingual_tags.models import TaggedItem
 
 
-@python_2_unicode_compatible
 class Category(TranslatableModel):
     """
     A blog ``Entry`` can belong to one category.
@@ -41,6 +40,7 @@ class Category(TranslatableModel):
         'multilingual_news.Category',
         verbose_name=_('Parent'),
         null=True, blank=True,
+        on_delete=models.SET_NULL,
     )
 
     hide_on_list = models.BooleanField(
@@ -97,16 +97,14 @@ class CategoryPlugin(CMSPlugin):
 
 class NewsEntryManager(TranslationManager):
     """Custom manager for the ``NewsEntry`` model."""
-    def published(self, check_language=True, language=None, kwargs=None,
-                  exclude_kwargs=None):
+    def published(self, check_language=True, language=None, kwargs=None, exclude_kwargs=None):
         """
         Returns all entries, which publication date has been hit or which have
         no date and which language matches the current language.
 
         """
         if check_language:
-            qs = NewsEntry.objects.language(language or get_language()).filter(
-                is_published=True)
+            qs = NewsEntry.objects.language(language or get_language()).translated(is_published=True)
         else:
             qs = self.get_queryset()
         qs = qs.filter(
@@ -118,8 +116,7 @@ class NewsEntryManager(TranslationManager):
             qs = qs.exclude(**exclude_kwargs)
         return qs.distinct().order_by('-pub_date')
 
-    def recent(self, check_language=True, language=None, limit=3, exclude=None,
-               kwargs=None, category=None):
+    def recent(self, check_language=True, language=None, limit=3, exclude=None, kwargs=None, category=None):
         """
         Returns recently published new entries.
 
@@ -128,14 +125,12 @@ class NewsEntryManager(TranslationManager):
             if not kwargs:
                 kwargs = {}
             kwargs['categories__in'] = [category]
-        qs = self.published(check_language=check_language, language=language,
-                            kwargs=kwargs)
+        qs = self.published(check_language=check_language, language=language, kwargs=kwargs)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
         return qs[:limit]
 
 
-@python_2_unicode_compatible
 class NewsEntry(TranslatableModel):
     """
     A news entry consists of a title, content and media fields.
@@ -202,6 +197,7 @@ class NewsEntry(TranslatableModel):
         'people.Person',
         verbose_name=_('Author'),
         blank=True, null=True,
+        on_delete=models.SET_NULL,
     )
 
     categories = models.ManyToManyField(
@@ -218,6 +214,7 @@ class NewsEntry(TranslatableModel):
     image = FilerImageField(
         verbose_name=_('Image'),
         null=True, blank=True,
+        on_delete=models.SET_NULL,
     )
 
     image_float = models.CharField(
@@ -253,6 +250,7 @@ class NewsEntry(TranslatableModel):
         verbose_name=_('Thumbnail'),
         null=True, blank=True,
         related_name='entries_with_thumbnails',
+        on_delete=models.SET_NULL,
     )
 
     excerpt = PlaceholderField(
@@ -303,17 +301,16 @@ class NewsEntry(TranslatableModel):
         """
         content = ''
         for plugin in self.excerpt.get_plugins():
-            if (plugin.plugin_type == 'TextPlugin' and
-                    plugin.djangocms_text_ckeditor_text.language ==
-                    get_language()):
+            if plugin.plugin_type == 'TextPlugin' and plugin.djangocms_text_ckeditor_text.language == get_language():
                 content = plugin.djangocms_text_ckeditor_text.body
             if content:
                 break
         if not content:
             for plugin in self.content.get_plugins():
-                if (plugin.plugin_type == 'TextPlugin' and
-                        plugin.djangocms_text_ckeditor_text.language ==
-                        get_language()):
+                if (
+                    plugin.plugin_type == 'TextPlugin'
+                    and plugin.djangocms_text_ckeditor_text.language == get_language()
+                ):
                     content = plugin.djangocms_text_ckeditor_text.body
                 if content:
                     break

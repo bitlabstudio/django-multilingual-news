@@ -4,14 +4,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 from document_library.admin import AttachmentInline
-from hvad.admin import TranslatableAdmin
+from parler.admin import TranslatableAdmin
 from multilingual_tags.admin import TaggedItemInline
 
 from .models import Category, NewsEntry
 
 
 class CategoryAdmin(TranslatableAdmin):
-    list_display = ['get_title', 'hide_on_list', 'all_translations', ]
+    list_display = ['get_title', 'hide_on_list', 'all_languages_column', ]
 
     def get_title(self, obj):
         return obj.title
@@ -21,9 +21,7 @@ class CategoryAdmin(TranslatableAdmin):
 class NewsEntryAdmin(PlaceholderAdminMixin, TranslatableAdmin):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
-    list_display = [
-        'get_title', 'pub_date', 'get_is_published', 'get_categories',
-        'all_translations']
+    list_display = ['get_title', 'pub_date', 'get_is_published', 'get_categories', 'all_languages_column']
     # prepopulated_fields = {'slug': ('title', )}
 
     def get_is_published(self, obj):

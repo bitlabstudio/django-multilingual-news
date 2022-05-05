@@ -12,11 +12,9 @@ class NewsSitemapTestCase(TestCase):
 
     def test_sitemap(self):
         news = mixer.blend('multilingual_news.NewsEntry')
-        translation = news.translate('en')
-        translation.is_published = True
-        translation.save()
+        news.set_current_language('en')
+        news.is_published = True
+        news.save()
         sitemap = NewsSitemap()
-        self.assertEqual(sitemap.items().count(), 1, msg=(
-            'Should return one item.'))
-        self.assertTrue(sitemap.lastmod(obj=news), msg=(
-            'Should return the publication date of the news.'))
+        self.assertEqual(sitemap.items().count(), 1, msg='Should return one item.')
+        self.assertTrue(sitemap.lastmod(obj=news), msg='Should return the publication date of the news.')

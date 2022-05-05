@@ -20,15 +20,15 @@ class GetPublishedEntriesTestCase(TestCase):
 
     def setUp(self):
         self.entry1 = mixer.blend('multilingual_news.NewsEntry')
-        new_entry = self.entry1.translate('de')
-        new_entry.title = 'GerTitle'
-        new_entry.is_published = True
-        new_entry.save()
+        self.entry1.set_current_language('de')
+        self.entry1.title = 'GerTitle'
+        self.entry1.is_published = True
+        self.entry1.save()
         self.entry2 = mixer.blend('multilingual_news.NewsEntry')
-        new_entry = self.entry2.translate('de')
-        new_entry.title = 'GerTitle2'
-        new_entry.is_published = False
-        new_entry.save()
+        self.entry2.set_current_language('de')
+        self.entry2.title = 'GerTitle2'
+        self.entry2.is_published = False
+        self.entry2.save()
 
         self.object_list = [self.entry1, self.entry2]
 
@@ -37,11 +37,10 @@ class GetPublishedEntriesTestCase(TestCase):
         # retrieve the one german entry
         self.assertEqual(
             get_published_entries(self.object_list, 'de').count(),
-            1, msg=('The tag should have returned only one entry.'))
+            1, msg='The tag should have returned only one entry.')
         # retrieve the two english entries
         self.assertEqual(
-            get_published_entries(self.object_list).count(),
-            1, msg=('The tag should have returned one entry.'))
+            get_published_entries(self.object_list).count(), 1, msg='The tag should have returned one entry.')
 
 
 class GetNewsEntryMetaDescriptionTestCase(TestCase):
@@ -49,22 +48,21 @@ class GetNewsEntryMetaDescriptionTestCase(TestCase):
     longMessage = True
 
     def setUp(self):
-        self.newsentry_with_meta = mixer.blend(
-            'multilingual_news.NewsEntry')
-        en_trans = self.newsentry_with_meta.translate('en')
-        en_trans.meta_description = 'Meta Description'
-        en_trans.save()
+        self.newsentry_with_meta = mixer.blend('multilingual_news.NewsEntry')
+        self.newsentry_with_meta.set_current_language('en')
+        self.newsentry_with_meta.meta_description = 'Meta Description'
+        self.newsentry_with_meta.save()
 
-        self.newsentry_with_excerpt = mixer.blend(
-            'multilingual_news.NewsEntry')
-        self.newsentry_with_excerpt.translate('en')
+        self.newsentry_with_excerpt = mixer.blend('multilingual_news.NewsEntry')
+        self.newsentry_with_excerpt.set_current_language('en')
+        self.newsentry_with_excerpt.meta_description = ''
         add_plugin(self.newsentry_with_excerpt.excerpt, 'LinkPlugin', 'en')
-        add_plugin(self.newsentry_with_excerpt.excerpt, 'TextPlugin', 'en',
-                   body='<p>Test excerpt</p>')
+        add_plugin(self.newsentry_with_excerpt.excerpt, 'TextPlugin', 'en', body='<p>Test excerpt</p>')
+        self.newsentry_with_excerpt.save()
 
-        self.newsentry_with_content = mixer.blend(
-            'multilingual_news.NewsEntry')
-        self.newsentry_with_content.translate('en')
+        self.newsentry_with_content = mixer.blend('multilingual_news.NewsEntry')
+        self.newsentry_with_content.set_current_language('en')
+        self.newsentry_with_content.meta_description = ''
         add_plugin(self.newsentry_with_content.content, 'LinkPlugin', 'en')
         add_plugin(self.newsentry_with_content.content, 'TextPlugin', 'en',
                    body=(
@@ -72,6 +70,7 @@ class GetNewsEntryMetaDescriptionTestCase(TestCase):
                        ' to test the cropping and the appending of the dots,'
                        ' which happens only on very long descriptions.'
                        ' When will this become longer than 160?</p>'))
+        self.newsentry_with_content.save()
 
     def test_tag(self):
         activate('en')
@@ -102,21 +101,24 @@ class GetNewsEntryMetaTitleTestCase(TestCase):
 
     def setUp(self):
         self.entry = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            title='Title',
-            master__author=mixer.blend('people.PersonTranslation'),
+            'multilingual_news.NewsEntry',
+            author=mixer.blend('people.Person'),
         )
+        self.entry.set_current_language('en')
+        self.entry.title = 'Title'
+        self.entry.save()
         self.entry_with_meta = mixer.blend(
-            'multilingual_news.NewsEntryTranslation',
-            master__author=mixer.blend('people.PersonTranslation'),
-            meta_title='Meta',
-            title='Title2'
+            'multilingual_news.NewsEntry',
+            author=mixer.blend('people.Person'),
         )
+        self.entry_with_meta.set_current_language('en')
+        self.entry_with_meta.meta_title = 'Meta'
+        self.entry_with_meta.title = 'Title2'
+        self.entry_with_meta.save()
 
     def test_tag(self):
         self.assertEqual(get_newsentry_meta_title(self.entry), 'Title')
-        self.assertEqual(get_newsentry_meta_title(self.entry_with_meta),
-                         'Meta')
+        self.assertEqual(get_newsentry_meta_title(self.entry_with_meta), 'Meta')
 
 
 class GetRecentNewsTestCase(TestCase):
@@ -125,22 +127,22 @@ class GetRecentNewsTestCase(TestCase):
 
     def setUp(self):
         self.news_entry = mixer.blend('multilingual_news.NewsEntry')
-        trans = self.news_entry.translate('en')
-        trans.is_published = True
-        trans.save()
+        self.news_entry.set_current_language('en')
+        self.news_entry.is_published = True
+        self.news_entry.save()
         self.category = mixer.blend('multilingual_news.Category')
         self.news_entry.categories.add(self.category)
 
         self.news_entry2 = mixer.blend('multilingual_news.NewsEntry')
-        trans = self.news_entry2.translate('en')
-        trans.is_published = True
-        trans.save()
+        self.news_entry2.set_current_language('en')
+        self.news_entry2.is_published = True
+        self.news_entry2.save()
 
         for x in range(0, 2):
             entry = mixer.blend('multilingual_news.NewsEntry')
-            trans = entry.translate('en')
-            trans.is_published = True
-            trans.save()
+            entry.set_current_language('en')
+            entry.is_published = True
+            entry.save()
 
     def test_tag(self):
         activate('en')

@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.syndication.views import Feed
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from cms.utils import get_language_from_request
@@ -14,8 +14,7 @@ from .models import NewsEntry
 
 
 def is_multilingual():
-    return 'django.middleware.locale.LocaleMiddleware' in \
-        settings.MIDDLEWARE_CLASSES
+    return 'django.middleware.locale.LocaleMiddleware' in settings.MIDDLEWARE
 
 
 def get_lang_name(lang):

@@ -1,6 +1,6 @@
 """Views for the ``multilingual_news`` app."""
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
@@ -13,6 +13,8 @@ from django.views.generic import (
     ListView,
     View,
 )
+
+from parler.views import TranslatableSlugMixin
 
 from .app_settings import PAGINATION_AMOUNT
 from .models import Category, NewsEntry
@@ -93,9 +95,7 @@ class GetEntriesAjaxView(ListView):
     def get_queryset(self):
         qs = NewsEntry.objects.published()
         if self.category:
-            qs = qs.filter(
-                Q(categories__slug=self.category) |
-                Q(categories__parent__slug=self.category))
+            qs = qs.filter(Q(categories__slug=self.category) | Q(categories__parent__slug=self.category))
         if self.count:
             return qs[:self.count]
         return qs
@@ -154,7 +154,7 @@ class TaggedNewsListView(ListView):
             tags__tag__slug=self.kwargs.get('tag'))
 
 
-class DetailViewMixin(object):
+class DetailViewMixin(TranslatableSlugMixin):
     """Mixin to handle different DetailView variations."""
     model = NewsEntry
     slug_field = 'slug'

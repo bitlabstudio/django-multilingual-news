@@ -43,10 +43,11 @@ TEMPLATES = [{
     'OPTIONS': {
         'context_processors': (
             'django.contrib.auth.context_processors.auth',
-            'django.core.context_processors.i18n',
-            'django.core.context_processors.request',
-            'django.core.context_processors.media',
-            'django.core.context_processors.static',
+            'django.contrib.messages.context_processors.messages',
+            'django.template.context_processors.i18n',
+            'django.template.context_processors.request',
+            'django.template.context_processors.media',
+            'django.template.context_processors.static',
             'sekizai.context_processors.sekizai',
         )
     }
@@ -60,7 +61,7 @@ COVERAGE_MODULE_EXCLUDES = [
     'south_migrations', 'fixtures', 'admin$', 'django_extensions',
 ]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -92,7 +93,7 @@ EXTERNAL_APPS = [
     'mptt',
     'filer',
     'easy_thumbnails',
-    'hvad',
+    'parler',
     'document_library',
     'people',
     'multilingual_tags',
@@ -120,3 +121,14 @@ CMS_TEMPLATES = (
 # settings for localized_names
 LONG_NAME_FORMAT = '{g} {L}, {f}'
 LONG_NAME_FORMAT_NON_ROMAN = '{g} {x}, {a} ({L}, {f})'
+
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'en'},
+        {'code': 'de'},
+    ),
+    'default': {
+        'fallback': 'en',             # defaults to PARLER_DEFAULT_LANGUAGE_CODE
+        'hide_untranslated': False,   # the default; let .active_translations() return fallbacks too.
+    }
+}

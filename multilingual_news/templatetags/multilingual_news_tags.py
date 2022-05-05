@@ -10,7 +10,7 @@ from ..models import NewsEntry, Category
 register = template.Library()
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_published_entries(object_list, language_code=None):
     return NewsEntry.objects.published(language=language_code)
 
@@ -34,7 +34,7 @@ def get_newsentry_meta_title(newsentry):
     return newsentry.meta_title or newsentry.title
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_recent_news(context, check_language=True, limit=3, exclude=None,
                     category=None):
     filter_kwargs = {
