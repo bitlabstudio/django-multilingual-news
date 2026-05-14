@@ -1,4 +1,5 @@
 """Models for the ``multilingual_news`` app."""
+
 import re
 
 from django.urls import reverse
@@ -7,7 +8,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.html import escape
 from django.utils.timezone import now
-from django.utils.translation import ugettext_lazy as _, get_language
+from django.utils.translation import gettext_lazy as _, get_language
 
 from cms.models.fields import PlaceholderField
 from cms.models import CMSPlugin
@@ -29,49 +30,59 @@ class Category(TranslatableModel):
     :hide_on_list: Boolean to show/hide on list view.
 
     """
+
     creation_date = models.DateTimeField(auto_now_add=True)
 
     slug = models.SlugField(
         max_length=512,
-        verbose_name=_('Slug'),
+        verbose_name=_("Slug"),
     )
 
     parent = models.ForeignKey(
-        'multilingual_news.Category',
-        verbose_name=_('Parent'),
-        null=True, blank=True,
+        "multilingual_news.Category",
+        verbose_name=_("Parent"),
+        null=True,
+        blank=True,
         on_delete=models.SET_NULL,
     )
 
     hide_on_list = models.BooleanField(
         default=False,
-        verbose_name=_('Hide on list view'),
+        verbose_name=_("Hide on list view"),
     )
 
     translations = TranslatedFields(
         title=models.CharField(
             max_length=256,
-            verbose_name=_('Title'),
+            verbose_name=_("Title"),
         )
     )
 
     class Meta:
-        ordering = ('slug', )
-        verbose_name = _('Category')
-        verbose_name_plural = _('Categories')
+        ordering = ("slug",)
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
 
     def __str__(self):
-        return self.safe_translation_getter('title', self.slug)
+        return self.safe_translation_getter("title", self.slug)
 
     def get_entries(self):
         """Returns the entries for this category."""
-        return self.newsentries.filter(
-            translations__is_published=True, pub_date__lte=now()).order_by(
-            '-pub_date').distinct()
+        return (
+            self.newsentries.filter(
+                translations__is_published=True, pub_date__lte=now()
+            )
+            .order_by("-pub_date")
+            .distinct()
+        )
 
     def get_absolute_url(self):
-        return reverse('news_archive_category', kwargs={
-            'category': self.slug, })
+        return reverse(
+            "news_archive_category",
+            kwargs={
+                "category": self.slug,
+            },
+        )
 
 
 class CategoryPlugin(CMSPlugin):
@@ -83,40 +94,52 @@ class CategoryPlugin(CMSPlugin):
       want to alter a template.
 
     """
+
     categories = models.ManyToManyField(
         Category,
-        verbose_name=_('Category'),
+        verbose_name=_("Category"),
     )
 
     template_argument = models.CharField(
         max_length=20,
-        verbose_name=_('Template Argument'),
+        verbose_name=_("Template Argument"),
         blank=True,
     )
 
 
 class NewsEntryManager(TranslationManager):
     """Custom manager for the ``NewsEntry`` model."""
-    def published(self, check_language=True, language=None, kwargs=None, exclude_kwargs=None):
+
+    def published(
+        self, check_language=True, language=None, kwargs=None, exclude_kwargs=None
+    ):
         """
         Returns all entries, which publication date has been hit or which have
         no date and which language matches the current language.
 
         """
         if check_language:
-            qs = NewsEntry.objects.language(language or get_language()).translated(is_published=True)
+            qs = NewsEntry.objects.language(language or get_language()).translated(
+                is_published=True
+            )
         else:
             qs = self.get_queryset()
-        qs = qs.filter(
-            models.Q(pub_date__lte=now()) | models.Q(pub_date__isnull=True)
-        )
+        qs = qs.filter(models.Q(pub_date__lte=now()) | models.Q(pub_date__isnull=True))
         if kwargs is not None:
             qs = qs.filter(**kwargs)
         if exclude_kwargs is not None:
             qs = qs.exclude(**exclude_kwargs)
-        return qs.distinct().order_by('-pub_date')
+        return qs.distinct().order_by("-pub_date")
 
-    def recent(self, check_language=True, language=None, limit=3, exclude=None, kwargs=None, category=None):
+    def recent(
+        self,
+        check_language=True,
+        language=None,
+        limit=3,
+        exclude=None,
+        kwargs=None,
+        category=None,
+    ):
         """
         Returns recently published new entries.
 
@@ -124,8 +147,10 @@ class NewsEntryManager(TranslationManager):
         if category:
             if not kwargs:
                 kwargs = {}
-            kwargs['categories__in'] = [category]
-        qs = self.published(check_language=check_language, language=language, kwargs=kwargs)
+            kwargs["categories__in"] = [category]
+        qs = self.published(
+            check_language=check_language, language=language, kwargs=kwargs
+        )
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
         return qs[:limit]
@@ -154,129 +179,137 @@ class NewsEntry(TranslatableModel):
     :meta_description: the description, that goes into the meta tags.
 
     """
+
     IMAGE_FLOAT_VALUES = {
-        'left': 'left',
-        'right': 'right',
+        "left": "left",
+        "right": "right",
     }
 
     IMAGE_FLOAT_CHOICES = (
-        (IMAGE_FLOAT_VALUES['left'], _('Left')),
-        (IMAGE_FLOAT_VALUES['right'], _('Right')),
+        (IMAGE_FLOAT_VALUES["left"], _("Left")),
+        (IMAGE_FLOAT_VALUES["right"], _("Right")),
     )
 
     translations = TranslatedFields(
         title=models.CharField(
             max_length=512,
-            verbose_name=_('Title'),
+            verbose_name=_("Title"),
         ),
-
         slug=models.SlugField(
             max_length=512,
-            verbose_name=_('Slug'),
+            verbose_name=_("Slug"),
         ),
-
         is_published=models.BooleanField(
-            verbose_name=_('Is published'),
+            verbose_name=_("Is published"),
             default=False,
         ),
         meta_title=models.CharField(
-            verbose_name=_('Meta title'),
-            help_text=_('Best to keep this below 70 characters'),
+            verbose_name=_("Meta title"),
+            help_text=_("Best to keep this below 70 characters"),
             max_length=128,
-            blank=True, null=True,
+            blank=True,
+            null=True,
         ),
         meta_description=models.TextField(
-            verbose_name=_('Meta description'),
-            help_text=_('Best to keep this below 160 characters'),
+            verbose_name=_("Meta description"),
+            help_text=_("Best to keep this below 160 characters"),
             max_length=512,
-            blank=True, null=True,
-        )
+            blank=True,
+            null=True,
+        ),
     )
 
     author = models.ForeignKey(
-        'people.Person',
-        verbose_name=_('Author'),
-        blank=True, null=True,
+        "people.Person",
+        verbose_name=_("Author"),
+        blank=True,
+        null=True,
         on_delete=models.SET_NULL,
     )
 
     categories = models.ManyToManyField(
         Category,
-        verbose_name=_('Categories'),
-        related_name='newsentries',
+        verbose_name=_("Categories"),
+        related_name="newsentries",
     )
 
     pub_date = models.DateTimeField(
-        verbose_name=_('Publication date'),
-        blank=True, null=True,
+        verbose_name=_("Publication date"),
+        blank=True,
+        null=True,
     )
 
     image = FilerImageField(
-        verbose_name=_('Image'),
-        null=True, blank=True,
+        verbose_name=_("Image"),
+        null=True,
+        blank=True,
         on_delete=models.SET_NULL,
     )
 
     image_float = models.CharField(
         max_length=8,
-        verbose_name=_('Image float'),
+        verbose_name=_("Image float"),
         choices=IMAGE_FLOAT_CHOICES,
         blank=True,
     )
 
     image_width = models.IntegerField(
-        verbose_name=_('Image width'),
-        null=True, blank=True,
+        verbose_name=_("Image width"),
+        null=True,
+        blank=True,
     )
 
     image_height = models.IntegerField(
-        verbose_name=_('Image height'),
-        null=True, blank=True,
+        verbose_name=_("Image height"),
+        null=True,
+        blank=True,
     )
 
     image_source_url = models.CharField(
         max_length=1024,
-        verbose_name=_('Image source URL'),
+        verbose_name=_("Image source URL"),
         blank=True,
     )
 
     image_source_text = models.CharField(
         max_length=1024,
-        verbose_name=_('Image source text'),
+        verbose_name=_("Image source text"),
         blank=True,
     )
 
     thumbnail = FilerImageField(
-        verbose_name=_('Thumbnail'),
-        null=True, blank=True,
-        related_name='entries_with_thumbnails',
+        verbose_name=_("Thumbnail"),
+        null=True,
+        blank=True,
+        related_name="entries_with_thumbnails",
         on_delete=models.SET_NULL,
     )
 
     excerpt = PlaceholderField(
-        slotname='multilingual_news_excerpt',
-        related_name='multilingual_news_excerpts',
-        blank=True, null=True,
+        slotname="multilingual_news_excerpt",
+        related_name="multilingual_news_excerpts",
+        blank=True,
+        null=True,
     )
 
     content = PlaceholderField(
-        slotname='multilingual_news_content',
-        related_name='multilingual_news_contents',
-        blank=True, null=True,
+        slotname="multilingual_news_content",
+        related_name="multilingual_news_contents",
+        blank=True,
+        null=True,
     )
 
     tags = GenericRelation(TaggedItem)
-    attachments = GenericRelation(Attachment,
-                                  related_query_name='news_entries')
+    attachments = GenericRelation(Attachment, related_query_name="news_entries")
     objects = NewsEntryManager()
 
     class Meta:
-        ordering = ('-pub_date', )
-        verbose_name = _('News Entry')
-        verbose_name_plural = _('News Entries')
+        ordering = ("-pub_date",)
+        verbose_name = _("News Entry")
+        verbose_name_plural = _("News Entries")
 
     def __str__(self):
-        return self.safe_translation_getter('title', 'Untranslated entry')
+        return self.safe_translation_getter("title", "Untranslated entry")
 
     @property
     def category(self):
@@ -288,10 +321,16 @@ class NewsEntry(TranslatableModel):
     def get_absolute_url(self):
         if self.pub_date and not settings.USE_TZ:
             # Using timezones can lead to 404
-            return reverse('news_detail', kwargs={
-                'year': self.pub_date.year, 'month': self.pub_date.month,
-                'day': self.pub_date.day, 'slug': self.slug})
-        return reverse('news_detail', kwargs={'slug': self.slug})
+            return reverse(
+                "news_detail",
+                kwargs={
+                    "year": self.pub_date.year,
+                    "month": self.pub_date.month,
+                    "day": self.pub_date.day,
+                    "slug": self.slug,
+                },
+            )
+        return reverse("news_detail", kwargs={"slug": self.slug})
 
     def get_description(self):
         """
@@ -299,16 +338,19 @@ class NewsEntry(TranslatableModel):
         content placeholder.
 
         """
-        content = ''
+        content = ""
         for plugin in self.excerpt.get_plugins():
-            if plugin.plugin_type == 'TextPlugin' and plugin.djangocms_text_ckeditor_text.language == get_language():
+            if (
+                plugin.plugin_type == "TextPlugin"
+                and plugin.djangocms_text_ckeditor_text.language == get_language()
+            ):
                 content = plugin.djangocms_text_ckeditor_text.body
             if content:
                 break
         if not content:
             for plugin in self.content.get_plugins():
                 if (
-                    plugin.plugin_type == 'TextPlugin'
+                    plugin.plugin_type == "TextPlugin"
                     and plugin.djangocms_text_ckeditor_text.language == get_language()
                 ):
                     content = plugin.djangocms_text_ckeditor_text.body
@@ -316,22 +358,21 @@ class NewsEntry(TranslatableModel):
                     break
 
         # remove html tags and escape the rest
-        pattern = re.compile('<.*?>')
-        content = pattern.sub('', content)
+        pattern = re.compile("<.*?>")
+        content = pattern.sub("", content)
         text = escape(content)
         return text
 
     def get_preview_url(self):
         slug = self.slug
-        return reverse('news_preview', kwargs={'slug': slug})
+        return reverse("news_preview", kwargs={"slug": slug})
 
     def is_public(self):
         """
         Returns True, if the entry is considered public.
 
         """
-        return self.is_published and (
-            self.pub_date is None or self.pub_date <= now())
+        return self.is_published and (self.pub_date is None or self.pub_date <= now())
 
     def save(self, *args, **kwargs):
         try:
@@ -345,9 +386,10 @@ class NewsEntry(TranslatableModel):
 
 class RecentPlugin(CMSPlugin):
     """Plugin model to display recent news."""
+
     limit = models.PositiveIntegerField(
-        verbose_name=_('Maximum news amount'),
+        verbose_name=_("Maximum news amount"),
     )
     current_language_only = models.BooleanField(
-        verbose_name=_('Only show entries for the selected language'),
+        verbose_name=_("Only show entries for the selected language"),
     )
