@@ -6,12 +6,14 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.html import escape
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _, get_language
 
-from cms.models.fields import PlaceholderField
+from cms.models.fields import PlaceholderRelationField
 from cms.models import CMSPlugin
+from cms.utils.placeholder import get_placeholder_from_slot
 from document_library.models import Attachment
 from filer.fields.image import FilerImageField
 from parler.managers import TranslationManager
@@ -285,19 +287,7 @@ class NewsEntry(TranslatableModel):
         on_delete=models.SET_NULL,
     )
 
-    excerpt = PlaceholderField(
-        slotname="multilingual_news_excerpt",
-        related_name="multilingual_news_excerpts",
-        blank=True,
-        null=True,
-    )
-
-    content = PlaceholderField(
-        slotname="multilingual_news_content",
-        related_name="multilingual_news_contents",
-        blank=True,
-        null=True,
-    )
+    placeholders = PlaceholderRelationField()
 
     tags = GenericRelation(TaggedItem)
     attachments = GenericRelation(Attachment, related_query_name="news_entries")
@@ -310,6 +300,14 @@ class NewsEntry(TranslatableModel):
 
     def __str__(self):
         return self.safe_translation_getter("title", "Untranslated entry")
+
+    @cached_property
+    def excerpt(self):
+        return get_placeholder_from_slot(self.placeholders, "multilingual_news_excerpt")
+
+    @cached_property
+    def content(self):
+        return get_placeholder_from_slot(self.placeholders, "multilingual_news_content")
 
     @property
     def category(self):

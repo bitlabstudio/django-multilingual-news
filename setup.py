@@ -35,6 +35,6 @@ setup(
         'django-document-library',
         'django-people>=1.1',
         'django-multilingual-tags',
-        'django-cms>=3.0',
+        'django-cms>=5.0',
     ],
 )

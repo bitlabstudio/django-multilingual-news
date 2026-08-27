@@ -3,7 +3,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from cms.admin.placeholderadmin import PlaceholderAdminMixin
 from document_library.admin import AttachmentInline
 from parler.admin import TranslatableAdmin
 from multilingual_tags.admin import TaggedItemInline
@@ -24,7 +23,7 @@ class CategoryAdmin(TranslatableAdmin):
     get_title.short_description = _("Title")
 
 
-class NewsEntryAdmin(PlaceholderAdminMixin, TranslatableAdmin):
+class NewsEntryAdmin(TranslatableAdmin):
     """Admin class for the ``NewsEntry`` model."""
 
     inlines = [AttachmentInline, TaggedItemInline]

@@ -90,7 +90,6 @@ EXTERNAL_APPS = [
     'django_libs',
     'sekizai',
     'menus',
-    'mptt',
     'filer',
     'easy_thumbnails',
     'parler',

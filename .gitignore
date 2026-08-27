@@ -7,3 +7,4 @@ dist/
 media/
 .coverage
 .idea/
+.claude
