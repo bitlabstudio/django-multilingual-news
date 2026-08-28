@@ -162,6 +162,12 @@ class DetailViewMixin(TranslatableSlugMixin):
     def get_queryset(self, **kwargs):
         return NewsEntry.objects.language(get_language())
 
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        if hasattr(request, 'toolbar'):
+            request.toolbar.set_object(self.object)
+        return response
+
 
 class NewsDateDetailView(DetailViewMixin, DateDetailView):
     """View to display one news entry with publication date."""
