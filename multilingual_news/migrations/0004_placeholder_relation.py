@@ -36,12 +36,4 @@ class Migration(migrations.Migration):
             migrate_placeholders_forward,
             migrations.RunPython.noop,
         ),
-        migrations.RemoveField(
-            model_name="newsentry",
-            name="excerpt",
-        ),
-        migrations.RemoveField(
-            model_name="newsentry",
-            name="content",
-        ),
     ]
