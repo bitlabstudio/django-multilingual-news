@@ -301,6 +301,9 @@ class NewsEntry(TranslatableModel):
     def __str__(self):
         return self.safe_translation_getter("title", "Untranslated entry")
 
+    def get_placeholder_slots(self):
+        return ["multilingual_news_excerpt", "multilingual_news_content"]
+
     @cached_property
     def excerpt(self):
         return get_placeholder_from_slot(self.placeholders, "multilingual_news_excerpt")
